@@ -77,3 +77,11 @@ Expr : AtomicExpr (AtomicExpr)
     | Expr DCOLON Expr (Prim2("::", Expr1, Expr2))
     | Expr SEMIC Expr (Prim2(";", Expr1, Expr2))
     | Expr RBRA Nat LBRA (lex())
+
+AtomicExpr : Const (Const)
+    | Name (Name)
+    | RBRA Prog LBRA (lex())
+    | RPAR Expr LPAR (Expr)
+    | RPAR Comps LPAR (Comps)
+    | FN Args ARROW Expr END (lex())
+
