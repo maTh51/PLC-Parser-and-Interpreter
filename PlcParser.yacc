@@ -9,7 +9,7 @@
     | IF | THEN | ELSE
     | MATCH | WITH
     | HEAD | TAIL | ISE | PRINT
-    | EQ | NEQ | EXCL | AND | LT | LTE | GTE
+    | EQ | NEQ | NOT | AND | LT | LTE | GTE
     | PLUS | MINUS | MULTI | DIV
     | RBRA | LBRA
     | RKEY | LKEY
@@ -37,6 +37,10 @@
     | Params of plcType
     | Types of ListT
 
+%left ELSE AND EQ NEQ LT LTE PLUS MINUS MULTI DIV RBRA
+%right SEMIC ARROW DCOLON
+%nonassoc IF NOT HEAD TAIL ISE PRINT 
+
 %eop EOF
 
 %noshift EOF
@@ -55,7 +59,7 @@ Expr : AtomicExpr (AtomicExpr)
     | AppExpr (AppExpr)
     | IF Expr THEN Expr ELSE Expr (If(Expr1, Expr2, Expr3))
     | MATCH Expr WITH MatchExpr (lex())
-    | EXCL Expr (Prim1("!", Expr))
+    | NOT Expr (Prim1("!", Expr))
     | MINUS Expr (Prim1("-", Expr))
     | HEAD Expr (lex())
     | TAIL Expr (lex())
