@@ -85,3 +85,5 @@ AtomicExpr : Const (Const)
     | RPAR Comps LPAR (Comps)
     | FN Args ARROW Expr END (lex())
 
+AppExpr : AtomicExpr AtomicExpr (lex())
+    | AppExpr AtomicExpr (lex())
