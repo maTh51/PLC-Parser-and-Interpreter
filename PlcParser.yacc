@@ -17,7 +17,7 @@
     | FN | END
     | TRUE | FALSE
     | PIPE | ARROW | DARROW | USCORE
-    | TYPENIL | TYPEBOOL | TYPEINT 
+    | TNIL | TBOOL | TINT 
     | EOF
 
 %nonterm Prog of expr
@@ -53,19 +53,19 @@ Prog : Expr (Expr)
     | Decl (Decl)
 
 Decl : VAR Name EQ Expr SEMIC Prog (Let(Name, Expr, Prog))
-    | FUN Name Args EQ Expr (lex())
-    | FUNREC Name Args COLON Type EQ Expr (lex())
+    | FUN Name Args EQ Expr ()
+    | FUNREC Name Args COLON Type EQ Expr ()
 
 Expr : AtomicExpr (AtomicExpr)
     | AppExpr (AppExpr)
     | IF Expr THEN Expr ELSE Expr (If(Expr1, Expr2, Expr3))
-    | MATCH Expr WITH MatchExpr (lex())
+    | MATCH Expr WITH MatchExpr ()
     | NOT Expr (Prim1("!", Expr))
     | MINUS Expr (Prim1("-", Expr))
-    | HEAD Expr (lex())
-    | TAIL Expr (lex())
-    | ISE Expr (lex())
-    | PRINT Expr (lex())
+    | HEAD Expr ()
+    | TAIL Expr ()
+    | ISE Expr ()
+    | PRINT Expr ()
     | Expr AND Expr (Prim2("&&", Expr1, Expr2))
     | Expr PLUS Expr (Prim2("+", Expr2, Expr2))
     | Expr MINUS Expr (Prim2("-", Expr2, Expr2))
@@ -77,50 +77,50 @@ Expr : AtomicExpr (AtomicExpr)
     | Expr LTE Expr (Prim2("<=", Expr2, Expr2))
     | Expr DCOLON Expr (Prim2("::", Expr1, Expr2))
     | Expr SEMIC Expr (Prim2(";", Expr1, Expr2))
-    | Expr RBRA Nat LBRA (lex())
+    | Expr RBRA Nat LBRA ()
 
 AtomicExpr : Const (Const)
     | Name (Name)
-    | RBRA Prog LBRA (lex())
+    | RBRA Prog LBRA ()
     | RPAR Expr LPAR (Expr)
     | RPAR Comps LPAR (Comps)
-    | FN Args DARROW Expr END (lex())
-
-AppExpr : AtomicExpr AtomicExpr (lex())
-    | AppExpr AtomicExpr (lex())
-
+    | FN Args DARROW Expr END ()
+(*
+AppExpr : AtomicExpr AtomicExpr ()
+    | AppExpr AtomicExpr ()
+*)
 Const : TRUE (ConB(TRUE))
     | FALSE (ConB(FALSE))
     | Nat (ConI(Nat))
-    | LPAR RPAR (lex())
-    | LPAR Type LBRA RBRA RPAR (lex())
+    | LPAR RPAR ()
+    | LPAR Type LBRA RBRA RPAR ()
 
-Comps : Expr COMMA Expr (lex())
-    | Expr COMMA Comps (lex())
+Comps : Expr COMMA Expr ()
+    | Expr COMMA Comps ()
 
-MatchExpr : END (lex())
-    | PIPE CondExpr ARROW Expr MatchExpr (lex())
+MatchExpr : END ()
+    | PIPE CondExpr ARROW Expr MatchExpr ()
 
 CondExpr : Expr (Expr)
-    | USCORE (lex())
+    | USCORE ()
 
-Args : RPAR LPAR (lex())
-    | RPAR Params LPAR (lex())
+Args : RPAR LPAR ()
+    | RPAR Params LPAR ()
 
 Params : TypedVar (TypedVar)
-    | TypedVar COMMA Params (lex())
+    | TypedVar COMMA Params ()
 
-TypedVar : Type Name (lex())
+TypedVar : Type Name ()
 
 Type : AtomicType (AtomicType)
-    | LPAR Types RPAR (lex())
-    | LBRA Type RBRA (lex())
-    | Type ARROW Type (lex())
+    | LPAR Types RPAR ()
+    | LBRA Type RBRA ()
+    | Type ARROW Type ()
 
-AtomicType : Nil (lex())
-    | Bool (BoolT)
-    | Int (IntT)
-    | LPAR Type RPAR (lex())
+AtomicType : TNIL ()
+    | TBOOL (BoolT)
+    | TINT (IntT)
+    | LPAR Type RPAR ()
 
-Types : Type COMMA Type (lex())
-    | Type COMMA Types (lex())
+Types : Type COMMA Type ()
+    | Type COMMA Types ()
