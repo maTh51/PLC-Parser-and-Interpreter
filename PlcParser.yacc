@@ -28,7 +28,7 @@
     | Type of plcType
     | AtomicExpr of expr 
     | AppExpr of expr 
-    | Match_expr of expr
+    | MatchExpr of expr
     | Nat of int
     | Const of expr 
     | Comps of expr
@@ -54,4 +54,22 @@ Decl : VAR Name EQ Expr SEMIC Prog (Let(Name, Expr, Prog))
 Expr : AtomicExpr (AtomicExpr)
     | AppExpr (AppExpr)
     | IF Expr THEN Expr ELSE Expr (If(Expr1, Expr2, Expr3))
-    
+    | MATCH Expr WITH MatchExpr (lex())
+    | EXCL Expr (Prim1("!", Expr))
+    | MINUS Expr (Prim1("-", Expr))
+    | HEAD Expr (lex())
+    | TAIL Expr (lex())
+    | ISE Expr (lex())
+    | PRINT Expr (lex())
+    | Expr AND Expr (Prim2("&&", Expr1, Expr2))
+    | Expr PLUS Expr (Prim2("+", Expr2, Expr2))
+    | Expr MINUS Expr (Prim2("-", Expr2, Expr2))
+    | Expr MULTI Expr (Prim2("*", Expr2, Expr2))
+    | Expr DIV Expr (Prim2("/", Expr2, Expr2))
+    | Expr EQ Expr (Prim2("=", Expr2, Expr2))
+    | Expr NEQ Expr (Prim2("!=", Expr2, Expr2))
+    | Expr LT Expr (Prim2("<", Expr2, Expr2))
+    | Expr LTE Expr (Prim2("<=", Expr2, Expr2))
+    | Expr DCOLON Expr (Prim2("::", Expr1, Expr2))
+    | Expr SEMIC Expr (Prim2(";", Expr1, Expr2))
+    | Expr RBRA Nat LBRA (lex())
