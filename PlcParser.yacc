@@ -16,7 +16,7 @@
     | RPAR | LPAR
     | FN | END
     | TRUE | FALSE
-    | PIPE | ARROW | USCORE
+    | PIPE | ARROW | DARROW | USCORE
     | TYPENIL | TYPEBOOL | TYPEINT 
     | EOF
 
@@ -32,8 +32,8 @@
     | Nat of int
     | Const of expr 
     | Comps of expr
-    | Cond_expr of expr
-    | Typed_var of plcVal
+    | CondExpr of expr
+    | TypedVar of plcVal
     | Params of plcType
     | Types of ListT
 
@@ -83,7 +83,7 @@ AtomicExpr : Const (Const)
     | RBRA Prog LBRA (lex())
     | RPAR Expr LPAR (Expr)
     | RPAR Comps LPAR (Comps)
-    | FN Args ARROW Expr END (lex())
+    | FN Args DARROW Expr END (lex())
 
 AppExpr : AtomicExpr AtomicExpr (lex())
     | AppExpr AtomicExpr (lex())
@@ -96,4 +96,7 @@ Const : TRUE (ConB(TRUE))
 
 Comps : Expr COMMA Expr (lex())
     | Expr COMMA Comps (lex())
+
+MatchExpr : END (lex())
+    | PIPE CondExpr ARROW Expr MatchExpr (lex())
 
