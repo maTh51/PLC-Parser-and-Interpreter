@@ -94,3 +94,6 @@ Const : TRUE (ConB(TRUE))
     | LPAR RPAR (lex())
     | LPAR Type LBRA RBRA RPAR (lex())
 
+Comps : Expr COMMA Expr (lex())
+    | Expr COMMA Comps (lex())
+
