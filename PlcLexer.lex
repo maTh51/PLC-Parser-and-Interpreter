@@ -23,6 +23,31 @@ fun getLineAsString() =
 (* Define what to do when the end of the file is reached. *)
 fun eof () = Tokens.EOF(0,0)
 
+fun strToInt s =
+	case Int.fromString s of
+        SOME i => i
+	  | NONE => raise Fail ("Could not convert string '" ^ s ^ "' to integer")
+
+fun keyword (s, lpos, rpos) =
+    case s of
+        "var" => VAR(lpos, rpos)
+        "fun" => FUN(lpos, rpos)
+        "fun rec" => FUNREC(lpos, rpos)
+        "if" => IF(lpos, rpos)
+        "then" => THEN(lpos, rpos)
+        "else" => ELSE(lpos, rpos)
+        "match" => MATCH(lpos, rpos)
+        "with" => WITH(lpos, rpos)
+        "hd" => HEAD(lpos, rpos)
+        "tl" => TAIL(lpos, rpos)
+        "ise" => ISE(lpos, rpos)
+        "print" => PRINT(lpos, rpos)
+        "fn" => FN(lpos, rpos)
+        "end" => END(lpos, rpos)
+        "true" => TRUE(lpos, rpos)
+        "false" => FALSE(lpos, rpos)
+        | _ => Name(s, lpos, rpos)
+
 (* Initialize the lexer. *)
 fun init() = ()
 %%
@@ -34,7 +59,8 @@ identifier=[a-zA-Z_][a-zA-Z_0-9]*;
 %%
 
 \n => (lineNumber := !lineNumber + 1; lex());
-
 {whitespace}+ => (lex());
-{digit}+ => (CINT(yypos, yypos));
+{digit}+ => (Const(yytext, yypos, yypos));
+{identifier} => (keyword(yytext, yypos, yypos));
 "+" => (PLUS(yypos, yypos));
+"-" => (MINUS(yypos, yypos));
