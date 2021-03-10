@@ -26,6 +26,7 @@
     | Name of string
     | Args of expr
     | Type of plcType
+    | AtomicType of plcType
     | AtomicExpr of expr 
     | AppExpr of expr 
     | MatchExpr of expr
@@ -109,4 +110,17 @@ Args : RPAR LPAR (lex())
 Params : TypedVar (TypedVar)
     | TypedVar COMMA Params (lex())
 
-    
+TypedVar : Type Name (lex())
+
+Type : AtomicType (AtomicType)
+    | LPAR Types RPAR (lex())
+    | LBRA Type RBRA (lex())
+    | Type ARROW Type (lex())
+
+AtomicType : Nil (lex())
+    | Bool (BoolT)
+    | Int (IntT)
+    | LPAR Type RPAR (lex())
+
+Types : Type COMMA Type (lex())
+    | Type COMMA Types (lex())
