@@ -103,3 +103,10 @@ MatchExpr : END (lex())
 CondExpr : Expr (Expr)
     | USCORE (lex())
 
+Args : RPAR LPAR (lex())
+    | RPAR Params LPAR (lex())
+
+Params : TypedVar (TypedVar)
+    | TypedVar COMMA Params (lex())
+
+    
