@@ -22,28 +22,36 @@
 
 %nonterm Prog of expr
     | Expr of expr
-    | Decl of expr 
-    | Name of
-    | Args of
-    | Type of
-    | Atomic_expr of expr 
-    | App_expr of expr 
+    | Decl of expr
+    | Name of string
+    | Args of expr
+    | Type of plcType
+    | AtomicExpr of expr 
+    | AppExpr of expr 
     | Match_expr of expr
-    | Nat of 
+    | Nat of int
     | Const of expr 
-    | Comps of 
+    | Comps of expr
     | Cond_expr of expr
-    | Typed_var of
-    | Params of
+    | Typed_var of plcVal
+    | Params of plcType
     | Types of ListT
 
 %eop EOF
 
 %noshift EOF
 
-%start prog
+%start Prog
 
 %%
-expr : expr PLUS expr (Prim2("+", expr1, expr2))
+Prog : Expr (Expr)
+    | Decl (Decl)
 
-const : CINT (ConI(CINT))
+Decl : VAR Name EQ Expr SEMIC Prog (Let(Name, Expr, Prog))
+    | FUN Name Args EQ Expr (lex())
+    | FUNREC Name Args COLON Type EQ Expr (lex())
+
+Expr : AtomicExpr (AtomicExpr)
+    | AppExpr (AppExpr)
+    | IF Expr THEN Expr ELSE Expr (If(Expr1, Expr2, Expr3))
+    
