@@ -87,3 +87,10 @@ AtomicExpr : Const (Const)
 
 AppExpr : AtomicExpr AtomicExpr (lex())
     | AppExpr AtomicExpr (lex())
+
+Const : TRUE (ConB(TRUE))
+    | FALSE (ConB(FALSE))
+    | Nat (ConI(Nat))
+    | LPAR RPAR (lex())
+    | LPAR Type LBRA RBRA RPAR (lex())
+
