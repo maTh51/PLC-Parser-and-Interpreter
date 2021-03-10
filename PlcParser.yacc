@@ -100,3 +100,6 @@ Comps : Expr COMMA Expr (lex())
 MatchExpr : END (lex())
     | PIPE CondExpr ARROW Expr MatchExpr (lex())
 
+CondExpr : Expr (Expr)
+    | USCORE (lex())
+
