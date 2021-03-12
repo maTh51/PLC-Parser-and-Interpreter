@@ -54,7 +54,7 @@ Prog : Expr (Expr)
 
 Decl : VAR Name EQ Expr SEMIC Prog (Let(Name, Expr, Prog))
     | FUN Name Args EQ Expr SEMIC Prog (Let(Name, makeAnon(Args, Expr), Prog))
-    | FUNREC Name Args COLON Type EQ Expr SEMIC Prog (makeFun(NAme, Args, Type, Expr, Prog))
+    | FUNREC Name Args COLON Type EQ Expr SEMIC Prog (makeFun(Name, Args, Type, Expr, Prog))
 
 Expr : AtomicExpr (AtomicExpr)
     | AppExpr (AppExpr)
@@ -77,4 +77,9 @@ Expr : AtomicExpr (AtomicExpr)
     | Expr LTE Expr (Prim2("<=", Expr2, Expr2))
     | Expr DCOLON Expr (Prim2("::", Expr1, Expr2))
     | Expr SEMIC Expr (Prim2(";", Expr1, Expr2))
-    | Expr RBRA Nat LBRA ()
+    | Expr LBRA Nat RBRA (Item(Nat, Expr))
+
+Params : TypedVar (TypedVar::[])
+    | TypedVar COMMA Params (TypedVar::Params)
+
+TypedVar : Type Name (Type, Name)
