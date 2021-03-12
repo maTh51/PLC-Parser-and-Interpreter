@@ -443,7 +443,7 @@ end
 |  ( 11, ( ( _, ( MlyValue.Expr Expr1, _, Expr1right)) :: ( _, ( _, 
 HEAD1left, _)) :: rest671)) => let val  result = MlyValue.Expr (fn _
  => let val  (Expr as Expr1) = Expr1 ()
- in (hd Expr)
+ in (Prim1("hd", Expr))
 end)
  in ( LrTable.NT 1, ( result, HEAD1left, Expr1right), rest671)
 end
