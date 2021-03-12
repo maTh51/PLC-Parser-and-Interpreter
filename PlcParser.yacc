@@ -24,7 +24,7 @@
     | Expr of expr
     | Decl of expr
     | Name of string
-    | Args of expr
+    | Args of ( plcType * string ) list
     | Type of plcType
     | AtomicType of plcType
     | AtomicExpr of expr 
@@ -34,8 +34,8 @@
     | Const of expr 
     | Comps of expr
     | CondExpr of expr
-    | TypedVar of plcVal
-    | Params of plcType
+    | TypedVar of plcType * string
+    | Params of (plcType * string ) list
     | Types of ListT
 
 %left ELSE AND EQ NEQ LT LTE PLUS MINUS MULTI DIV RBRA
@@ -53,8 +53,8 @@ Prog : Expr (Expr)
     | Decl (Decl)
 
 Decl : VAR Name EQ Expr SEMIC Prog (Let(Name, Expr, Prog))
-    | FUN Name Args EQ Expr ()
-    | FUNREC Name Args COLON Type EQ Expr ()
+    | FUN Name Args EQ Expr SEMIC Prog (Let(Name, makeAnon(Args, Expr), Prog))
+    | FUNREC Name Args COLON Type EQ Expr SEMIC Prog (makeFun(NAme, Args, Type, Expr, Prog))
 
 Expr : AtomicExpr (AtomicExpr)
     | AppExpr (AppExpr)
@@ -78,49 +78,3 @@ Expr : AtomicExpr (AtomicExpr)
     | Expr DCOLON Expr (Prim2("::", Expr1, Expr2))
     | Expr SEMIC Expr (Prim2(";", Expr1, Expr2))
     | Expr RBRA Nat LBRA ()
-
-AtomicExpr : Const (Const)
-    | Name (Name)
-    | RBRA Prog LBRA ()
-    | RPAR Expr LPAR (Expr)
-    | RPAR Comps LPAR (Comps)
-    | FN Args DARROW Expr END ()
-(*
-AppExpr : AtomicExpr AtomicExpr ()
-    | AppExpr AtomicExpr ()
-*)
-Const : TRUE (ConB(TRUE))
-    | FALSE (ConB(FALSE))
-    | Nat (ConI(Nat))
-    | LPAR RPAR ()
-    | LPAR Type LBRA RBRA RPAR ()
-
-Comps : Expr COMMA Expr ()
-    | Expr COMMA Comps ()
-
-MatchExpr : END ()
-    | PIPE CondExpr ARROW Expr MatchExpr ()
-
-CondExpr : Expr (Expr)
-    | USCORE ()
-
-Args : RPAR LPAR ()
-    | RPAR Params LPAR ()
-
-Params : TypedVar (TypedVar)
-    | TypedVar COMMA Params ()
-
-TypedVar : Type Name ()
-
-Type : AtomicType (AtomicType)
-    | LPAR Types RPAR ()
-    | LBRA Type RBRA ()
-    | Type ARROW Type ()
-
-AtomicType : TNIL ()
-    | TBOOL (BoolT)
-    | TINT (IntT)
-    | LPAR Type RPAR ()
-
-Types : Type COMMA Type ()
-    | Type COMMA Types ()
