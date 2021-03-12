@@ -30,7 +30,7 @@ fun strToInt s =
 
 fun keyword (s, lpos, rpos) =
     case s of
-        | "var" => VAR(lpos, rpos)
+          "var" => VAR(lpos, rpos)
         | "fun" => FUN(lpos, rpos)
         | "fun rec" => FUNREC(lpos, rpos)
         | "if" => IF(lpos, rpos)

@@ -18,12 +18,12 @@
     | TRUE | FALSE
     | PIPE | ARROW | DARROW | USCORE
     | TNIL | TBOOL | TINT 
+    | Name of string
     | EOF
 
 %nonterm Prog of expr
     | Expr of expr
     | Decl of expr
-    | Name of string
     | Args of ( plcType * string ) list
     | Type of plcType
     | AtomicType of plcType
@@ -36,7 +36,6 @@
     | CondExpr of expr
     | TypedVar of plcType * string
     | Params of (plcType * string ) list
-    | Types of ListT
 
 %left ELSE AND EQ NEQ LT LTE PLUS MINUS MULTI DIV RBRA
 %right SEMIC ARROW DCOLON
@@ -59,13 +58,11 @@ Decl : VAR Name EQ Expr SEMIC Prog (Let(Name, Expr, Prog))
 Expr : AtomicExpr (AtomicExpr)
     | AppExpr (AppExpr)
     | IF Expr THEN Expr ELSE Expr (If(Expr1, Expr2, Expr3))
-    | MATCH Expr WITH MatchExpr ()
     | NOT Expr (Prim1("!", Expr))
     | MINUS Expr (Prim1("~", Expr))
     | HEAD Expr (Prim1("hd", Expr))
     | TAIL Expr (Prim1("tl", Expr))
     | ISE Expr (Prim1("null", Expr))
-    | PRINT Expr ()
     | Expr AND Expr (Prim2("&&", Expr1, Expr2))
     | Expr PLUS Expr (Prim2("+", Expr2, Expr2))
     | Expr MINUS Expr (Prim2("-", Expr2, Expr2))
@@ -78,8 +75,13 @@ Expr : AtomicExpr (AtomicExpr)
     | Expr DCOLON Expr (Prim2("::", Expr1, Expr2))
     | Expr SEMIC Expr (Prim2(";", Expr1, Expr2))
     | Expr LBRA Nat RBRA (Item(Nat, Expr))
+    | Const (Const)
 
 Params : TypedVar (TypedVar::[])
     | TypedVar COMMA Params (TypedVar::Params)
+
+Const : TRUE (ConB(true))
+    | FALSE (ConB(false))
+    | Nat (ConI(Nat))
 
 TypedVar : Type Name (Type, Name)
