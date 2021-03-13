@@ -1,2 +1,3 @@
 PlcParser.yacc.sml
 PlcParser.yacc.sig
+PlcLexer.lex.sml

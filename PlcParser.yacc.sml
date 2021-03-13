@@ -561,7 +561,7 @@ end
 |  ( 9, ( ( _, ( MlyValue.Expr Expr1, _, Expr1right)) :: ( _, ( _, 
 MINUS1left, _)) :: rest671)) => let val  result = MlyValue.Expr (fn _
  => let val  (Expr as Expr1) = Expr1 ()
- in (Prim1("-", Expr))
+ in (Prim1("~", Expr))
 end)
  in ( LrTable.NT 1, ( result, MINUS1left, Expr1right), rest671)
 end
@@ -770,13 +770,13 @@ end)
  in ( LrTable.NT 10, ( result, Expr1left, Comps1right), rest671)
 end
 |  ( 38, ( ( _, ( _, _, RPAR1right)) :: ( _, ( _, LPAR1left, _)) :: 
-rest671)) => let val  result = MlyValue.Args (fn _ => ([]))
+rest671)) => let val  result = MlyValue.Args (fn _ => (()))
  in ( LrTable.NT 3, ( result, LPAR1left, RPAR1right), rest671)
 end
 |  ( 39, ( ( _, ( _, _, RPAR1right)) :: ( _, ( MlyValue.Params Params1
 , _, _)) :: ( _, ( _, LPAR1left, _)) :: rest671)) => let val  result =
  MlyValue.Args (fn _ => let val  (Params as Params1) = Params1 ()
- in (Params)
+ in ((Params))
 end)
  in ( LrTable.NT 3, ( result, LPAR1left, RPAR1right), rest671)
 end
