@@ -36,16 +36,20 @@
     | Comps of expr list
     | CondExpr of expr
     | TypedVar of plcType * string
-    | Params of (plcType * string ) list
+    | Params of ( plcType * string ) list
     | Const of expr
 
-%left ELSE AND EQ NEQ LT LTE RBRA
+%right SEMIC ARROW
+%nonassoc IF
+%left ELSE
+%left AND
+%left EQ NEQ
+%left LT LTE
+%right DCOLON
 %left PLUS MINUS 
 %left MULTI DIV
-%right SEMIC ARROW DCOLON
+%nonassoc NOT HEAD TAIL ISE PRINT Name
 %left LBRA
-
-%nonassoc IF NOT HEAD TAIL ISE PRINT 
 
 %eop EOF
 
@@ -65,7 +69,7 @@ Expr : AtomicExpr (AtomicExpr)
     | AppExpr (AppExpr)
     | IF Expr THEN Expr ELSE Expr (If(Expr1, Expr2, Expr3))
     | NOT Expr (Prim1("!", Expr))
-    | MINUS Expr (Prim1("-", Expr))
+    | MINUS Expr (Prim1("~", Expr))
     | HEAD Expr (Prim1("hd", Expr))
     | TAIL Expr (Prim1("tl", Expr))
     | ISE Expr (Prim1("null", Expr))
@@ -86,6 +90,7 @@ Expr : AtomicExpr (AtomicExpr)
 
 AtomicExpr : Const (Const)
     | Name (Var(Name))
+    | LKEY Prog RKEY (Prog)
     | LPAR Expr RPAR (Expr)
     | LPAR Comps RPAR (List Comps)
     | FN Args DARROW Expr END (makeAnon(Args, Expr))
@@ -113,8 +118,8 @@ Type : AtomicType (AtomicType)
     | Type ARROW Type (FunT(Type1, Type2))
 
 AtomicType : TNIL (ListT [])
-    | TINT (IntT)
     | TBOOL (BoolT)
+    | TINT (IntT)
     | LPAR Type RPAR (Type)
 
 Types : Type COMMA Type ([Type1, Type2])
