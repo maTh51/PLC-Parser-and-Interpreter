@@ -46,6 +46,7 @@ fun keyword (s, lpos, rpos) =
         | "end" => END(lpos, rpos)
         | "true" => TRUE(lpos, rpos)
         | "false" => FALSE(lpos, rpos)
+        | "Bool" => TBOOL(lpos, rpos)
         | _ => Name(s, lpos, rpos)
 
 (* Initialize the lexer. *)

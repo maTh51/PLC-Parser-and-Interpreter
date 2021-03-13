@@ -39,8 +39,12 @@
     | Params of (plcType * string ) list
     | Const of expr
 
-%left ELSE AND EQ NEQ LT LTE PLUS MINUS MULTI DIV RBRA
+%left ELSE AND EQ NEQ LT LTE RBRA
+%left PLUS MINUS 
+%left MULTI DIV
 %right SEMIC ARROW DCOLON
+%left LBRA
+
 %nonassoc IF NOT HEAD TAIL ISE PRINT 
 
 %eop EOF
@@ -61,10 +65,11 @@ Expr : AtomicExpr (AtomicExpr)
     | AppExpr (AppExpr)
     | IF Expr THEN Expr ELSE Expr (If(Expr1, Expr2, Expr3))
     | NOT Expr (Prim1("!", Expr))
-    | MINUS Expr (Prim1("~", Expr))
+    | MINUS Expr (Prim1("-", Expr))
     | HEAD Expr (Prim1("hd", Expr))
     | TAIL Expr (Prim1("tl", Expr))
     | ISE Expr (Prim1("null", Expr))
+    | PRINT Expr (Prim1("print", Expr))
     | Expr AND Expr (Prim2("&&", Expr1, Expr2))
     | Expr PLUS Expr (Prim2("+", Expr1, Expr2))
     | Expr MINUS Expr (Prim2("-", Expr1, Expr2))
@@ -77,35 +82,40 @@ Expr : AtomicExpr (AtomicExpr)
     | Expr DCOLON Expr (Prim2("::", Expr1, Expr2))
     | Expr SEMIC Expr (Prim2(";", Expr1, Expr2))
     | Expr LBRA Nat RBRA (Item(Nat, Expr))
+
+
+AtomicExpr : Const (Const)
+    | Name (Var(Name))
     | LPAR Expr RPAR (Expr)
     | LPAR Comps RPAR (List Comps)
-
-
-Comps : Expr COMMA Expr ([Expr1, Expr2])
-    | Expr COMMA Comps ([Expr] @ Comps)
-
-Params : TypedVar (TypedVar::[])
-    | TypedVar COMMA Params (TypedVar::Params)
-
-
-TypedVar : Type Name (Type, Name)
-
-AtomicExpr : Const (Const) 
+    | FN Args DARROW Expr END (makeAnon(Args, Expr))
 
 Const : TRUE (ConB(true))
     | FALSE (ConB(false))
     | Nat (ConI(Nat))
     | LPAR RPAR (List [])
-    | LPAR Type LBRA RBRA RPAR (ESeq Type)
+    | LPAR Type LBRA RBRA RPAR (ESeq(Type))
+
+Comps : Expr COMMA Expr ([Expr1, Expr2])
+    | Expr COMMA Comps ([Expr] @ Comps)
+
+Args : LPAR RPAR ([])
+    | LPAR Params RPAR (Params)
+
+Params : TypedVar ([TypedVar])
+    | TypedVar COMMA Params ([TypedVar] @ Params)
+
+TypedVar : Type Name (Type, Name)
 
 Type : AtomicType (AtomicType)
-    | LPAR Types RPAR (ListT(Types))
+    | LPAR Types RPAR (ListT (Types))
     | LBRA Type RBRA (SeqT(Type))
     | Type ARROW Type (FunT(Type1, Type2))
 
 AtomicType : TNIL (ListT [])
     | TINT (IntT)
     | TBOOL (BoolT)
+    | LPAR Type RPAR (Type)
 
 Types : Type COMMA Type ([Type1, Type2])
     | Type COMMA Types ([Type] @ Types)

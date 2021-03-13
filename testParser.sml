@@ -19,14 +19,17 @@ open PlcFrontEnd;
 
 
 fromString "15";
+fromString "-3 < 4";
 fromString "true";
 fromString "()";
 fromString "(6,false)[1]";
 fromString "([Bool] [])";
-(*
+fromString "print x";
 fromString "print x; true";
 fromString "3::7::t";
+
 fromString "fn (Int x) => -x end";
+(*
 fromString "var x = 9; x + 3";
 fromString "fun f(Int x) = x; f(1)";
 *)
