@@ -28,14 +28,16 @@
     | Decl of expr
     | Args of ( plcType * string ) list
     | Type of plcType
+    | Types of plcType list
     | AtomicType of plcType
     | AtomicExpr of expr 
     | AppExpr of expr 
     | MatchExpr of expr
-    | Comps of expr
+    | Comps of expr list
     | CondExpr of expr
     | TypedVar of plcType * string
     | Params of (plcType * string ) list
+    | Const of expr
 
 %left ELSE AND EQ NEQ LT LTE PLUS MINUS MULTI DIV RBRA
 %right SEMIC ARROW DCOLON
@@ -75,16 +77,35 @@ Expr : AtomicExpr (AtomicExpr)
     | Expr DCOLON Expr (Prim2("::", Expr1, Expr2))
     | Expr SEMIC Expr (Prim2(";", Expr1, Expr2))
     | Expr LBRA Nat RBRA (Item(Nat, Expr))
+    | LPAR Expr RPAR (Expr)
+    | LPAR Comps RPAR (List Comps)
+
 
 Comps : Expr COMMA Expr ([Expr1, Expr2])
-    | Expr COMMA Comps ([Expr]@ Comps)
+    | Expr COMMA Comps ([Expr] @ Comps)
 
 Params : TypedVar (TypedVar::[])
     | TypedVar COMMA Params (TypedVar::Params)
 
+
 TypedVar : Type Name (Type, Name)
 
-AtomicExpr : TRUE (ConB(true))
+AtomicExpr : Const (Const) 
+
+Const : TRUE (ConB(true))
     | FALSE (ConB(false))
     | Nat (ConI(Nat))
     | LPAR RPAR (List [])
+    | LPAR Type LBRA RBRA RPAR (ESeq Type)
+
+Type : AtomicType (AtomicType)
+    | LPAR Types RPAR (ListT(Types))
+    | LBRA Type RBRA (SeqT(Type))
+    | Type ARROW Type (FunT(Type1, Type2))
+
+AtomicType : TNIL (ListT [])
+    | TINT (IntT)
+    | TBOOL (BoolT)
+
+Types : Type COMMA Type ([Type1, Type2])
+    | Type COMMA Types ([Type] @ Types)
