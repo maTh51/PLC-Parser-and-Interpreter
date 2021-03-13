@@ -571,7 +571,7 @@ end
 |  ( 9, ( ( _, ( MlyValue.Expr Expr1, _, Expr1right)) :: ( _, ( _, 
 MINUS1left, _)) :: rest671)) => let val  result = MlyValue.Expr (fn _
  => let val  (Expr as Expr1) = Expr1 ()
- in (Prim1("~", Expr))
+ in (Prim1("-", Expr))
 end)
  in ( LrTable.NT 1, ( result, MINUS1left, Expr1right), rest671)
 end

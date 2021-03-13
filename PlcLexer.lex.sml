@@ -51,6 +51,8 @@ fun keyword (s, lpos, rpos) =
         | "true" => TRUE(lpos, rpos)
         | "false" => FALSE(lpos, rpos)
         | "Bool" => TBOOL(lpos, rpos)
+        | "Int" => TINT(lpos, rpos)
+        | "Nil" => TNIL(lpos, rpos)
         | _ => Name(s, lpos, rpos)
 
 (* Initialize the lexer. *)

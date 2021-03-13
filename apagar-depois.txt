@@ -86,8 +86,10 @@ AtomicExpr : Const (Const)
     | RPAR Comps LPAR (Comps)
     | FN Args DARROW Expr END ()
 (*
-AppExpr : AtomicExpr AtomicExpr ()
-    | AppExpr AtomicExpr ()
+
+AppExpr : AtomicExpr AtomicExpr (Call(AtomicExpr1, AtomicExpr2))
+    | AppExpr AtomicExpr (AppExpr)
+
 *)
 Const : TRUE (ConB(TRUE))
     | FALSE (ConB(FALSE))

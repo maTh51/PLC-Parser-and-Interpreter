@@ -29,7 +29,7 @@ fromString "print x; true";
 fromString "3::7::t";
 fromString "var x = 9; x + 3";
 
+fromString "fn (Int x) => -x end";
 (*
 fromString "fun f(Int x) = x; f(1)";
-fromString "fn (Int x) => -x end";
 *)
