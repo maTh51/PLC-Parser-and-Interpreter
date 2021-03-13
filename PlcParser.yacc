@@ -87,6 +87,7 @@ Expr : AtomicExpr (AtomicExpr)
     | Expr SEMIC Expr (Prim2(";", Expr1, Expr2))
     | Expr LBRA Nat RBRA (Item(Nat, Expr))
 
+AppExpr : AtomicExpr AtomicExpr (Call(AtomicExpr1, AtomicExpr2))
 
 AtomicExpr : Const (Const)
     | Name (Var(Name))
