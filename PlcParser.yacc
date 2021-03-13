@@ -18,6 +18,7 @@
     | TRUE | FALSE
     | PIPE | ARROW | DARROW | USCORE
     | TNIL | TBOOL | TINT 
+    | NIL
     | Name of string
     | Nat of int
     | EOF
@@ -63,17 +64,20 @@ Expr : AtomicExpr (AtomicExpr)
     | TAIL Expr (Prim1("tl", Expr))
     | ISE Expr (Prim1("null", Expr))
     | Expr AND Expr (Prim2("&&", Expr1, Expr2))
-    | Expr PLUS Expr (Prim2("+", Expr2, Expr2))
-    | Expr MINUS Expr (Prim2("-", Expr2, Expr2))
-    | Expr MULTI Expr (Prim2("*", Expr2, Expr2))
-    | Expr DIV Expr (Prim2("/", Expr2, Expr2))
-    | Expr EQ Expr (Prim2("=", Expr2, Expr2))
-    | Expr NEQ Expr (Prim2("!=", Expr2, Expr2))
-    | Expr LT Expr (Prim2("<", Expr2, Expr2))
-    | Expr LTE Expr (Prim2("<=", Expr2, Expr2))
+    | Expr PLUS Expr (Prim2("+", Expr1, Expr2))
+    | Expr MINUS Expr (Prim2("-", Expr1, Expr2))
+    | Expr MULTI Expr (Prim2("*", Expr1, Expr2))
+    | Expr DIV Expr (Prim2("/", Expr1, Expr2))
+    | Expr EQ Expr (Prim2("=", Expr1, Expr2))
+    | Expr NEQ Expr (Prim2("!=", Expr1, Expr2))
+    | Expr LT Expr (Prim2("<", Expr1, Expr2))
+    | Expr LTE Expr (Prim2("<=", Expr1, Expr2))
     | Expr DCOLON Expr (Prim2("::", Expr1, Expr2))
     | Expr SEMIC Expr (Prim2(";", Expr1, Expr2))
     | Expr LBRA Nat RBRA (Item(Nat, Expr))
+
+Comps : Expr COMMA Expr ([Expr1, Expr2])
+    | Expr COMMA Comps ([Expr]@ Comps)
 
 Params : TypedVar (TypedVar::[])
     | TypedVar COMMA Params (TypedVar::Params)
@@ -83,3 +87,4 @@ TypedVar : Type Name (Type, Name)
 AtomicExpr : TRUE (ConB(true))
     | FALSE (ConB(false))
     | Nat (ConI(Nat))
+    | LPAR RPAR (List [])

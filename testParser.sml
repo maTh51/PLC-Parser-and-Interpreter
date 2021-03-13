@@ -22,9 +22,12 @@ fromString "15";
 fromString "true";
 fromString "()";
 fromString "(6,false)[1]";
+
+(* 
 fromString "([Bool] [])";
 fromString "print x; true";
 fromString "3::7::t";
 fromString "fn (Int x) => -x end";
 fromString "var x = 9; x + 3";
 fromString "fun f(Int x) = x; f(1)";
+*)
