@@ -60,7 +60,7 @@ identifier=[a-zA-Z_][a-zA-Z_0-9]*;
 
 \n => (lineNumber := !lineNumber + 1; lex());
 {whitespace}+ => (lex());
-{digit}+ => (Const(yytext, yypos, yypos));
+{digit}+ => (Nat(strToInt(yytext), yypos, yypos));
 {identifier} => (keyword(yytext, yypos, yypos));
 "," => (COMMA(yypos, yypos));
 ";" => (SEMIC(yypos, yypos));

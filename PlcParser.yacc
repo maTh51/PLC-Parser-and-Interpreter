@@ -19,6 +19,7 @@
     | PIPE | ARROW | DARROW | USCORE
     | TNIL | TBOOL | TINT 
     | Name of string
+    | Nat of int
     | EOF
 
 %nonterm Prog of expr
@@ -30,8 +31,6 @@
     | AtomicExpr of expr 
     | AppExpr of expr 
     | MatchExpr of expr
-    | Nat of int
-    | Const of expr 
     | Comps of expr
     | CondExpr of expr
     | TypedVar of plcType * string
@@ -75,13 +74,12 @@ Expr : AtomicExpr (AtomicExpr)
     | Expr DCOLON Expr (Prim2("::", Expr1, Expr2))
     | Expr SEMIC Expr (Prim2(";", Expr1, Expr2))
     | Expr LBRA Nat RBRA (Item(Nat, Expr))
-    | Const (Const)
 
 Params : TypedVar (TypedVar::[])
     | TypedVar COMMA Params (TypedVar::Params)
 
-Const : TRUE (ConB(true))
+TypedVar : Type Name (Type, Name)
+
+AtomicExpr : TRUE (ConB(true))
     | FALSE (ConB(false))
     | Nat (ConI(Nat))
-
-TypedVar : Type Name (Type, Name)

@@ -299,7 +299,7 @@ let fun continue() = lex() in
 | 64 => (USCORE(yypos, yypos))
 | 66 => let val yytext=yymktext() in error("\n*** Lexer error: bad character ***\n");
       raise Fail("Lexer error: bad character " ^ yytext) end
-| 7 => let val yytext=yymktext() in Const(yytext, yypos, yypos) end
+| 7 => let val yytext=yymktext() in Nat(strToInt(yytext), yypos, yypos) end
 | _ => raise Internal.LexerError
 
 		) end )
