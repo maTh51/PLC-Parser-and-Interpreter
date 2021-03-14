@@ -47,7 +47,7 @@ val DCOLON:  'a * 'a -> (svalue,'a) token
 val COLON:  'a * 'a -> (svalue,'a) token
 val SEMIC:  'a * 'a -> (svalue,'a) token
 val COMMA:  'a * 'a -> (svalue,'a) token
-val FUNREC:  'a * 'a -> (svalue,'a) token
+val REC:  'a * 'a -> (svalue,'a) token
 val FUN:  'a * 'a -> (svalue,'a) token
 val VAR:  'a * 'a -> (svalue,'a) token
 end

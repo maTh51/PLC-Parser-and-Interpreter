@@ -4,7 +4,7 @@
 
 %pos int
 
-%term VAR | FUN | FUNREC
+%term VAR | FUN | REC
     | COMMA | SEMIC | COLON | DCOLON
     | IF | THEN | ELSE
     | MATCH | WITH
@@ -17,7 +17,7 @@
     | FN | END
     | TRUE | FALSE
     | PIPE | ARROW | DARROW | USCORE
-    | TNIL | TBOOL | TINT 
+    | TNIL | TBOOL | TINT
     | NIL
     | Name of string
     | Nat of int
@@ -63,7 +63,7 @@ Prog : Expr (Expr)
 
 Decl : VAR Name EQ Expr SEMIC Prog (Let(Name, Expr, Prog))
     | FUN Name Args EQ Expr SEMIC Prog (Let(Name, makeAnon(Args, Expr), Prog))
-    | FUNREC Name Args COLON Type EQ Expr SEMIC Prog (makeFun(Name, Args, Type, Expr, Prog))
+    | FUN REC Name Args COLON Type EQ Expr SEMIC Prog (makeFun(Name, Args, Type, Expr, Prog))
 
 Expr : AtomicExpr (AtomicExpr)
     | AppExpr (AppExpr)
@@ -88,14 +88,14 @@ Expr : AtomicExpr (AtomicExpr)
     | Expr SEMIC Expr (Prim2(";", Expr1, Expr2))
     | Expr LBRA Nat RBRA (Item(Nat, Expr))
 
-AppExpr : AtomicExpr AtomicExpr (Call(AtomicExpr1, AtomicExpr2))
-
 AtomicExpr : Const (Const)
     | Name (Var(Name))
     | LKEY Prog RKEY (Prog)
     | LPAR Expr RPAR (Expr)
     | LPAR Comps RPAR (List Comps)
     | FN Args DARROW Expr END (makeAnon(Args, Expr))
+
+AppExpr : AtomicExpr AtomicExpr (Call(AtomicExpr1, AtomicExpr2))
 
 Const : TRUE (ConB(true))
     | FALSE (ConB(false))
@@ -106,8 +106,8 @@ Const : TRUE (ConB(true))
 Comps : Expr COMMA Expr ([Expr1, Expr2])
     | Expr COMMA Comps ([Expr] @ Comps)
 
-MatchExpr : PIPE CondExpr ARROW Expr MatchExpr ([(CondExpr, Expr)] @ MatchExpr)
-    | END ([])
+MatchExpr : END ([])
+    | PIPE CondExpr ARROW Expr MatchExpr ([(CondExpr, Expr)] @ MatchExpr)
 
 CondExpr : Expr (SOME(Expr))
     | USCORE (NONE)

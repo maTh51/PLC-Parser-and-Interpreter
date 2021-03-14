@@ -31,7 +31,10 @@ fromString "var x = 9; x + 3";
 fromString "fn (Int x) => -x end";
 fromString "fun f(Int x) = x; f(1)";
 fromString "fun f(Int x) = x; f(f(f(1)))";
-fromString "match x with | 0 -> 1 | _ -> -1 end"
-
+fromString "match x with | 0 -> 1 | _ -> -1 end";
+fromString "if x <= 0 then 1 else x";
+fromString "fun rec f (Int x) : Int = if x <= 0 then 1 else x + f(x-1); f(5)";
+fromString "fun rec f (Int x) : Int = if x <= 0 then 1 else f(x-1); f(5)";
+fromString "fun rec f(Int n) : Int = if n <= 0 then 0 else n + f(n-1); f(5)"
 (*
 *)
