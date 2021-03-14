@@ -1,4 +1,3 @@
-use "Absyn.sml";
 
 val cases =
   (
