@@ -96,6 +96,7 @@ AtomicExpr : Const (Const)
     | FN Args DARROW Expr END (makeAnon(Args, Expr))
 
 AppExpr : AtomicExpr AtomicExpr (Call(AtomicExpr1, AtomicExpr2))
+    | AppExpr AtomicExpr (Call(AppExpr, AtomicExpr))
 
 Const : TRUE (ConB(true))
     | FALSE (ConB(false))
