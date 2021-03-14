@@ -34,7 +34,7 @@
     | AppExpr of expr 
     | MatchExpr of (expr option * expr) list
     | Comps of expr list
-    | CondExpr of expr
+    | CondExpr of expr option
     | TypedVar of plcType * string
     | Params of ( plcType * string ) list
     | Const of expr

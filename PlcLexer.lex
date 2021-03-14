@@ -49,6 +49,7 @@ fun keyword (s, lpos, rpos) =
         | "true" => TRUE(lpos, rpos)
         | "var" => VAR(lpos, rpos)
         | "with" => WITH(lpos, rpos)
+        | "_" => USCORE(lpos, rpos)
         | _ => Name(s, lpos, rpos)
 
 (* Initialize the lexer. *)

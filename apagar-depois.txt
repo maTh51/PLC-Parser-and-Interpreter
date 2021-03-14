@@ -106,6 +106,14 @@ MatchExpr : END ()
 CondExpr : Expr (Expr)
     | USCORE ()
 
+
+MatchExpr : PIPE CondExpr ARROW Expr MatchExpr ([(CondExpr, Expr)] @ MatchExpr)
+    | END ([])
+
+CondExpr : Expr (SOME(Expr))
+    | USCORE (NONE)
+
+
 Args : RPAR LPAR ()
     | RPAR Params LPAR ()
 
