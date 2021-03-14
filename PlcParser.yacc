@@ -32,7 +32,7 @@
     | AtomicType of plcType
     | AtomicExpr of expr 
     | AppExpr of expr 
-    | MatchExpr of expr
+    | MatchExpr of (expr option * expr) list
     | Comps of expr list
     | CondExpr of expr
     | TypedVar of plcType * string
@@ -68,6 +68,7 @@ Decl : VAR Name EQ Expr SEMIC Prog (Let(Name, Expr, Prog))
 Expr : AtomicExpr (AtomicExpr)
     | AppExpr (AppExpr)
     | IF Expr THEN Expr ELSE Expr (If(Expr1, Expr2, Expr3))
+    | MATCH Expr WITH MatchExpr (Match(Expr, MatchExpr))
     | NOT Expr (Prim1("!", Expr))
     | MINUS Expr (Prim1("-", Expr))
     | HEAD Expr (Prim1("hd", Expr))
@@ -104,6 +105,12 @@ Const : TRUE (ConB(true))
 
 Comps : Expr COMMA Expr ([Expr1, Expr2])
     | Expr COMMA Comps ([Expr] @ Comps)
+
+MatchExpr : PIPE CondExpr ARROW Expr MatchExpr ([(CondExpr, Expr)] @ MatchExpr)
+    | END ([])
+
+CondExpr : Expr (SOME(Expr))
+    | USCORE (NONE)
 
 Args : LPAR RPAR ([])
     | LPAR Params RPAR (Params)

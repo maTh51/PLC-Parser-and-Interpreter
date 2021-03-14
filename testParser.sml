@@ -31,6 +31,8 @@ fromString "var x = 9; x + 3";
 fromString "fn (Int x) => -x end";
 fromString "fun f(Int x) = x; f(1)";
 fromString "fun f(Int x) = x; f(f(f(1)))";
+fromString "match x with Match (Var "x", | 0 -> 1 [(Some (ConI 0), ConI 1); | _ -> -1 (None, Prim1 (-",ConI 1))]) end"
+
 
 (*
 *)
