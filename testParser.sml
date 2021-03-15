@@ -37,6 +37,8 @@ fromString "fun rec f (Int x) : Int = if x <= 0 then 1 else x + f(x-1); f(5)";
 fromString "fun rec f (Int x) : Int = if x <= 0 then 1 else f(x-1); f(5)";
 fromString "fun rec f(Int n) : Int = if n <= 0 then 0 else n + f(n-1); f(5)";
 
+fromFile ("example.plc");
+
 use "testParserCases.sml";
 
 (*
@@ -59,3 +61,4 @@ fun test (xs:(string * expr) list, ate:int):(expr * expr) list =
                     then []
                     else [(fromString (#1 x), (#2 x))] @ test(y, ate-1)
     
+
