@@ -11,6 +11,7 @@ fromString "true && true"
 fromString "true && !true"
 fromString "true && !!true"
 fromString "true && !!!!false"
+fromString "if !true then true else false"
 
 levantam exceções:
 
@@ -18,3 +19,5 @@ teval(Prim1("!",ConI(3)),[]);
 teval(Prim1("-",ConB(false)),[]);
 teval(fun rec f1(Int x):Int = true; ());
 teval(fromString "!3");
+fromString "if !true then true else 3"
+fromString "if 1 then true else false"
