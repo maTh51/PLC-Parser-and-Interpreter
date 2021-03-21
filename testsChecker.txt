@@ -1,0 +1,10 @@
+dão certo:
+
+teval(Prim1("!",ConB(false)),[]);
+teval(Prim1("-",ConI(3)),[]);
+
+
+levantam exceções:
+
+teval(Prim1("!",ConI(3)),[]);
+teval(Prim1("-",ConB(false)),[]);

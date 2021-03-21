@@ -1,5 +1,7 @@
 (*Absyn*)
 
+use "Environ.sml";
+
 datatype plcType =
    IntT
   | BoolT
