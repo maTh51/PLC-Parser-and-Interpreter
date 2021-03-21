@@ -2,10 +2,13 @@ dão certo:
 
 teval(Prim1("!",ConB(false)),[]);
 teval(Prim1("-",ConI(3)),[]);
-
+teval(fromString "!true");
+fromString "!!!!!!!!true"
+fromString "!!!!!!!!!true"
 
 levantam exceções:
 
 teval(Prim1("!",ConI(3)),[]);
 teval(Prim1("-",ConB(false)),[]);
 teval(fun rec f1(Int x):Int = true; ());
+teval(fromString "!3");

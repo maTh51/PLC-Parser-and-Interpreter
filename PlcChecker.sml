@@ -65,6 +65,8 @@ fun teval (Var v) (env:plcType env) = (*1*)
         in
             FunT funType
         end
+    | teval (Prim1("!", e)) (env:plcType env) = (*14*)
+        if teval e env = BoolT then BoolT else raise UnknownType
 (*
         | Prim1("hd", Expr) => (*16*)
             let
