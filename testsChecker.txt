@@ -6,6 +6,11 @@ teval(fromString "!true");
 fromString "!!!!!!!!true"
 fromString "!!!!!!!!!true"
 fromString "----13";
+fromString "true && false"
+fromString "true && true"
+fromString "true && !true"
+fromString "true && !!true"
+fromString "true && !!!!false"
 
 levantam exceções:
 

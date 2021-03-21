@@ -69,6 +69,10 @@ fun teval (Var v) (env:plcType env) = (*1*)
         if teval e env = BoolT then BoolT else raise UnknownType
     | teval (Prim1("-", e)) (env:plcType env) = (*15*)
         if teval e env = IntT then IntT else raise UnknownType
+    | teval (Prim2("&&", e1, e2)) (env:plcType env) = (*20*)
+        if teval e1 env = BoolT andalso teval e2 env = BoolT
+            then BoolT
+            else raise UnknownType
 (*
         | Prim1("hd", Expr) => (*16*)
             let
