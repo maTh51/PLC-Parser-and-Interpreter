@@ -45,6 +45,14 @@ fun eval (Var v) (env:plcVal env) = (*1*)
 		end
     | eval (Anon(s, x, e)) (env:plcVal env) = Clos("", x, e, env) (*10*)
     | eval (Prim1("!", e)) (env:plcVal env) = (*14*)
-        case (eval e env) of 
-            BoolV b => BoolV(not b)
-            | _ => raise Impossible
+        let in
+            case (eval e env) of 
+                BoolV b => BoolV(not b)
+                | _ => raise Impossible
+        end
+    | eval (Prim1("-", e)) (env:plcVal env) = (*15*)
+        let in
+            case (eval e env) of
+                IntV i => IntV(~i)
+                | _ => raise Impossible
+        end

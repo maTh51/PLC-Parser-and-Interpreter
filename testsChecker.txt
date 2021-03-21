@@ -5,6 +5,7 @@ teval(Prim1("-",ConI(3)),[]);
 teval(fromString "!true");
 fromString "!!!!!!!!true"
 fromString "!!!!!!!!!true"
+fromString "----13";
 
 levantam exceções:
 
