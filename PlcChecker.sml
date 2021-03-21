@@ -87,6 +87,35 @@ fun teval (Var v) (env:plcType env) = (*1*)
                         else raise NotEqTypes
                 else raise IfCondNotBool
         end
+    | teval (Match(e, matches)) (env:plcType env) = (*13*)
+        if matches = []
+        then raise NoMatchResults
+        else
+            let
+                val eType = teval e env
+                val r1Type = teval (#2 (hd matches)) env
+
+                fun checkMatch (h::[]) = 
+                    let in
+                        case h of
+                              (SOME m, r) => if teval m env = eType
+                                               then if teval r env = r1Type
+                                                        then r1Type
+                                                        else raise MatchResTypeDiff
+                                               else raise MatchCondTypesDiff
+                            | (NONE, r) => if teval r env = r1Type
+                                            then r1Type
+                                            else raise MatchResTypeDiff
+                    end
+                  | checkMatch (h::t) =
+                    let
+                        val ht = checkMatch(h::[])
+                    in
+                        checkMatch(t)
+                    end
+            in
+                checkMatch(matches)
+            end
     | teval (Prim1("!", e)) (env:plcType env) = (*14*)
         if teval e env = BoolT then BoolT else raise UnknownType
     | teval (Prim1("-", e)) (env:plcType env) = (*15*)
@@ -131,33 +160,3 @@ fun teval (Var v) (env:plcType env) = (*1*)
 				if teval e1 env = teval e2 env andalso (teval e1 env = IntT orelse teval e1 env = BoolT)
 				then BoolT 
 				else raise UnknownType
-
-
-
-
-
-
-(*			
-        | Prim1("hd", Expr) => (*16*)
-            let
-                val st = teval Expr p
-            in
-                case st of
-                    SeqT t => t
-                    | _ => raise UnknownType
-            end
-        | Prim1("tl", Expr) => if  then  else 
-        | Prim1("ise", Expr) => if  then  else 
-        | Prim1("print", Expr) => if  then  else 
-        | Prim2("&&", Expr1, Expr2) => if  then  else 
-        | Prim2("+", Expr1, Expr2) => if  then  else 
-        | Prim2("-", Expr1, Expr2) => if  then  else 
-        | Prim2("*", Expr1, Expr2) => if  then  else 
-        | Prim2("/", Expr1, Expr2) => if  then  else 
-        | Prim2("=", Expr1, Expr2) => if  then  else 
-        | Prim2("!=", Expr1, Expr2) => if  then  else 
-        | Prim2("<", Expr1, Expr2) => if  then  else 
-        | Prim2("<=", Expr1, Expr2) => if  then  else 
-        | Prim2("::", Expr1, Expr2) => if  then  else 
-        | Prim2(";", Expr1, Expr2) => if  then  else
-        *)
