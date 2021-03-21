@@ -43,5 +43,4 @@ fun eval (Var v) (env:plcVal env) = (*1*)
 		in
 			eval t2 mapEnv
 		end
-	
-		
+    | eval (Anon(s, x, e)) (env:plcVal env) = Clos("", x, e, env) (*10*)
