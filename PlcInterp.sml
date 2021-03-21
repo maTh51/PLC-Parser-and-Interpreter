@@ -44,7 +44,24 @@ fun eval (Var v) (env:plcVal env) = (*1*)
 			eval t2 mapEnv
 		end
     | eval (Anon(s, x, e)) (env:plcVal env) = Clos("", x, e, env) (*10*)
-    (*| eval (Call(e2, e1)) (env:plcType env) = (*11*)*)
+    | eval (Call (e1, e2)) (env:plcVal env) = (*11*)
+				let
+						fun getArgs (List (h::[])) = [eval h env]
+							| getArgs (List (h::t)) = [eval h env] @ getArgs (List t)
+							| getArgs (e) = [eval e env]
+						
+						val mapEnv = [("$list", ListV (getArgs e2))] @ env
+						val evalE1 = eval e1 env
+				in
+						case evalE1 of Clos(name, var, e, auxEnv) =>
+									let
+										val evalE2 = eval e2 mapEnv
+										val newEnv = (var, evalE2)::(name, evalE1)::auxEnv
+									in
+										eval e newEnv
+									end
+							| _ => raise NotAFunc
+				end
     | eval (If(e, e1, e2)) (env:plcVal env) = (*12*)
         let in
             case (eval e env) of
