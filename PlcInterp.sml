@@ -52,6 +52,23 @@ fun eval (Var v) (env:plcVal env) = (*1*)
                 | BoolV false => eval e2 env
                 | _ => raise Impossible
         end
+    | eval (Match(e, matches)) (env:plcVal env) = (*13*)
+        let
+            fun makeMatch (h::[]) =
+                let in
+                    case h of
+                          (SOME m, r) => if eval e env = eval m env then eval r env else raise ValueNotFoundInMatch
+                        | (NONE, r) => eval r env
+                end
+              | makeMatch (h::t) = 
+                let in
+                    case h of
+                          (SOME m, r) => if eval e env = eval m env then eval r env else makeMatch(t)
+                        | (NONE, r) => eval r env
+                end
+        in
+            makeMatch(matches)
+        end
     | eval (Prim1("!", e)) (env:plcVal env) = (*14*)
         let in
             case (eval e env) of 

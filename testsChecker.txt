@@ -12,6 +12,7 @@ fromString "true && !true"
 fromString "true && !!true"
 fromString "true && !!!!false"
 fromString "if !true then true else false"
+fromString "match 3 with | 0 -> 5 | 1 -> 4 | 3 -> 3 end"
 
 levantam exceções:
 
@@ -21,3 +22,6 @@ teval(fun rec f1(Int x):Int = true; ());
 teval(fromString "!3");
 fromString "if !true then true else 3"
 fromString "if 1 then true else false"
+fromString "match 3 with | 0 -> 5 | 1 -> 4 | false -> 3 end"
+fromString "match 3 with | 0 -> 5 | 1 -> 4 | 3 -> true end"
+fromString "match 4 with | 0 -> 0 | 1 -> 5 | 3 -> 3 end"
