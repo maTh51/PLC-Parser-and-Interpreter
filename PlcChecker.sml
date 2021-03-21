@@ -73,7 +73,49 @@ fun teval (Var v) (env:plcType env) = (*1*)
         if teval e1 env = BoolT andalso teval e2 env = BoolT
             then BoolT
             else raise UnknownType
-(*
+		| teval (Prim2("::", e1, e2)) (env:plcType env) = (*21*)
+				let 
+					val tevalE1 = teval e1 env
+					val tevalE2 = teval e2 env
+				in
+            case (tevalE1, tevalE2) of
+                (IntT, ListT []) => SeqT IntT
+              | (IntT, SeqT s) => if s = IntT then SeqT s else raise NotEqTypes
+              | (BoolT, ListT []) => SeqT BoolT
+              | (BoolT, SeqT s) => if s = BoolT then SeqT s else raise NotEqTypes
+              | (ListT l, ListT []) => SeqT (ListT l)
+              | (ListT l, SeqT s) => if s = ListT l then SeqT s else raise NotEqTypes
+              | _ => raise UnknownType
+        end
+		| teval (Prim2("+", e1, e2)) (env:plcType env) = (*22*)
+				if teval e1 env = IntT andalso teval e2 env = IntT then IntT else raise UnknownType
+		| teval (Prim2("-", e1, e2)) (env:plcType env) = (*22*)
+				if teval e1 env = IntT andalso teval e2 env = IntT then IntT else raise UnknownType
+		| teval (Prim2("*", e1, e2)) (env:plcType env) = (*22*)
+				if teval e1 env = IntT andalso teval e2 env = IntT then IntT else raise UnknownType
+		| teval (Prim2("/", e1, e2)) (env:plcType env) = (*22*)
+				if teval e1 env = IntT andalso teval e2 env = IntT then IntT else raise UnknownType
+
+		| teval (Prim2("<", e1, e2)) (env:plcType env) = (*23*)
+				if teval e1 env = IntT andalso teval e2 env = IntT then BoolT else raise UnknownType
+		| teval (Prim2("<=", e1, e2)) (env:plcType env) = (*23*)
+				if teval e1 env = IntT andalso teval e2 env = IntT then BoolT else raise UnknownType
+				
+		| teval (Prim2("=", e1, e2)) (env:plcType env) = (*24*)
+				if teval e1 env = teval e2 env andalso (teval e1 env = IntT orelse teval e1 env = BoolT)
+				then BoolT 
+				else raise UnknownType
+		| teval (Prim2("!=", e1, e2)) (env:plcType env) = (*24*)
+				if teval e1 env = teval e2 env andalso (teval e1 env = IntT orelse teval e1 env = BoolT)
+				then BoolT 
+				else raise UnknownType
+
+
+
+
+
+
+(*			
         | Prim1("hd", Expr) => (*16*)
             let
                 val st = teval Expr p

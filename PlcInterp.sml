@@ -62,3 +62,52 @@ fun eval (Var v) (env:plcVal env) = (*1*)
                 (BoolV b1, BoolV b2) => BoolV(b1 andalso b2)
                 | _ => raise Impossible
         end
+		| eval (Prim2("::", e1, e2)) (env:plcVal env) = (*21*)
+        let in
+            case ((eval e1 env), (eval e2 env)) of
+                (IntV i, SeqV s) => SeqV (IntV i :: s)
+								| (BoolV b, SeqV s) =>  SeqV (BoolV b :: s)
+								| (ListV l, SeqV s) => SeqV (ListV l :: s)
+                | _ => raise Impossible
+        end
+		
+		| eval (Prim2("+", e1, e2)) (env:plcVal env) = (*22*)
+						let in
+								case ((eval e1 env), (eval e2 env)) of (IntV i1, IntV i2) => IntV(i1 + i2)
+								| _ => raise Impossible
+						end
+		| eval (Prim2("-", e1, e2)) (env:plcVal env) = (*22*)
+						let in
+								case ((eval e1 env), (eval e2 env)) of (IntV i1, IntV i2) => IntV(i1 - i2)
+								| _ => raise Impossible
+						end
+		| eval (Prim2("*", e1, e2)) (env:plcVal env) = (*22*)
+						let in
+								case ((eval e1 env), (eval e2 env)) of (IntV i1, IntV i2) => IntV(i1 * i2)
+								| _ => raise Impossible
+						end
+		| eval (Prim2("/", e1, e2)) (env:plcVal env) = (*22*)
+						let in
+								case ((eval e1 env), (eval e2 env)) of (IntV i1, IntV i2) => IntV(i1 div i2)
+								| _ => raise Impossible
+						end
+		| eval (Prim2("<", e1, e2)) (env:plcVal env) = (*23*)
+						let in
+								case ((eval e1 env), (eval e2 env)) of (IntV i1, IntV i2) => BoolV(i1 < i2)
+								| _ => raise Impossible
+						end
+		| eval (Prim2("<=", e1, e2)) (env:plcVal env) = (*23*)
+						let in
+								case ((eval e1 env), (eval e2 env)) of (IntV i1, IntV i2) => BoolV(i1 <= i2)
+								| _ => raise Impossible
+						end
+		| eval (Prim2("=", e1, e2)) (env:plcVal env) = (*24*)
+						let in
+								case ((eval e1 env), (eval e2 env)) of (IntV i1, IntV i2) => BoolV(i1 = i2)
+								| _ => raise Impossible
+						end
+		| eval (Prim2("!=", e1, e2)) (env:plcVal env) = (*24*)
+						let in
+								case ((eval e1 env), (eval e2 env)) of (IntV i1, IntV i2) => BoolV(i1 <> i2)
+								| _ => raise Impossible
+						end
