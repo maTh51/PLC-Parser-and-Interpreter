@@ -44,6 +44,14 @@ fun eval (Var v) (env:plcVal env) = (*1*)
 			eval t2 mapEnv
 		end
     | eval (Anon(s, x, e)) (env:plcVal env) = Clos("", x, e, env) (*10*)
+    (*| eval (Call(e2, e1)) (env:plcType env) = (*11*)*)
+    | eval (If(e, e1, e2)) (env:plcVal env) = (*12*)
+        let in
+            case (eval e env) of
+                  BoolV true => eval e1 env
+                | BoolV false => eval e2 env
+                | _ => raise Impossible
+        end
     | eval (Prim1("!", e)) (env:plcVal env) = (*14*)
         let in
             case (eval e env) of 

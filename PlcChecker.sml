@@ -65,6 +65,28 @@ fun teval (Var v) (env:plcType env) = (*1*)
         in
             FunT funType
         end
+    | teval (Call(e2, e1)) (env:plcType env) = (*11*)
+        let
+            val e2Type = teval e2 env
+            handle SymbolNotFound => let in raise NotFunc end
+            val e1Type = teval e1 env
+        in
+            case e2Type of
+                FunT (t1, t2) => if t1 = e1Type then t1 else raise CallTypeMisM
+              | _ => raise UnknownType
+        end
+    | teval (If(e, e1, e2)) (env:plcType env) = (*12*)
+        let
+            val cond = teval e env
+            val t1 = teval e1 env
+            val t2 = teval e2 env
+        in
+            if cond = BoolT
+                then if t1 = t2
+                        then t1
+                        else raise NotEqTypes
+                else raise IfCondNotBool
+        end
     | teval (Prim1("!", e)) (env:plcType env) = (*14*)
         if teval e env = BoolT then BoolT else raise UnknownType
     | teval (Prim1("-", e)) (env:plcType env) = (*15*)
