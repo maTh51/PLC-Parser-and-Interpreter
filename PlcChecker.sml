@@ -16,15 +16,15 @@ exception ListOutOfRange (*só pra lista, sequência não, parece que nao tem co
 exception OpNonList (*quando for avaliar um Item. se a expressão em que tiver tentando usar não for uma lista, dispara essa exceção*)
 
 
-fun teval (Var v) (env:plcType env) = 
+fun teval (Var v) (env:plcType env) = (*1*)
 	let in 
 		lookup env v 
 	handle 
 		SymbolNotFound => raise SymbolNotFound 
 	end
-	| teval (ConI _) (_) = IntT
-	| teval (ConB _) (_) = BoolT
-	| teval (List l) (env:plcType env) = 
+	| teval (ConI _) (_) = IntT (*2*)
+	| teval (ConB _) (_) = BoolT (*3, 4*)
+	| teval (List l) (env:plcType env) = (*5, 6*)
 		let 
 			fun tevalList (h::[]) = (teval h env)::[]
 				| tevalList (h::t) = (teval h env)::(tevalList t)
@@ -32,31 +32,31 @@ fun teval (Var v) (env:plcType env) =
 		in
 			ListT (tevalList l)
 		end
-	| teval (ESeq t) _ = 
+	| teval (ESeq t) _ = (*7*)
 		let in
 			case t of
 	  		SeqT elem => SeqT elem
 				| _ => raise EmptySeq
 		end 
-	| teval (Let(var, t1, t2)) (env:plcType env) =
+	| teval (Let(var, t1, t2)) (env:plcType env) = (*8*)
 		let
-      val tevalT1 = teval t1 env
-      val mapEnv = (var, tevalT1) :: env
-    in
-      teval t2 mapEnv
-    end
+            val tevalT1 = teval t1 env
+            val mapEnv = (var, tevalT1) :: env
+        in
+            teval t2 mapEnv
+        end
 	| teval (Letrec(nameFun, typeArg, arg, typeFun, t1, t2)) (env:plcType env) =
-		let	
+		let
 			val envArg = (arg, typeArg)
 			val types = (typeArg, typeFun)
 			val envRecFun = (nameFun, FunT types)
-      val tevalT1 = teval t1 (envRecFun :: envArg :: env)
-      val tevalT2 = teval t2 (envRecFun :: env)
-    in
-      if tevalT1 = typeFun 
-			then tevalT2 
-			else raise WrongRetType
-    end
+            val tevalT1 = teval t1 (envRecFun :: envArg :: env)
+            val tevalT2 = teval t2 (envRecFun :: env)
+        in
+            if tevalT1 = typeFun 
+			    then tevalT2 
+			    else raise WrongRetType
+        end
 
 
 (*
