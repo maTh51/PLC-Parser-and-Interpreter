@@ -8,3 +8,4 @@ levantam exceções:
 
 teval(Prim1("!",ConI(3)),[]);
 teval(Prim1("-",ConB(false)),[]);
+teval(fun rec f1(Int x):Int = true; ());

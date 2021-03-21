@@ -45,7 +45,7 @@ fun teval (Var v) (env:plcType env) = (*1*)
         in
             teval t2 mapEnv
         end
-	| teval (Letrec(nameFun, typeArg, arg, typeFun, t1, t2)) (env:plcType env) =
+	| teval (Letrec(nameFun, typeArg, arg, typeFun, t1, t2)) (env:plcType env) = (*9*)
 		let
 			val envArg = (arg, typeArg)
 			val types = (typeArg, typeFun)
@@ -57,8 +57,14 @@ fun teval (Var v) (env:plcType env) = (*1*)
 			    then tevalT2 
 			    else raise WrongRetType
         end
-
-
+    | teval (Anon(typeArg, arg, e)) (env:plcType env) = (*10*)
+        let
+            val envArg = (arg, typeArg)
+            val eType = teval e (envArg :: env)
+            val funType = (typeArg, eType)
+        in
+            FunT funType
+        end
 (*
         | Prim1("hd", Expr) => (*16*)
             let
