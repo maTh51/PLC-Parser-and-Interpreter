@@ -15,26 +15,50 @@ exception NotFunc
 exception ListOutOfRange (*só pra lista, sequência não, parece que nao tem como fazer seleção de item em sequência. Item é só pra lista, pra sequência não. Item tem que ser lista (regra 25) *)
 exception OpNonList (*quando for avaliar um Item. se a expressão em que tiver tentando usar não for uma lista, dispara essa exceção*)
 
-(*
-    não vai ter um case pra cada regra
 
-*)
+fun teval (Var v) (env:plcType env) = 
+	let in 
+		lookup env v 
+	handle 
+		SymbolNotFound => raise SymbolNotFound 
+	end
+	| teval (ConI _) (_) = IntT
+	| teval (ConB _) (_) = BoolT
+	| teval (List l) (env:plcType env) = 
+		let 
+			fun tevalList (h::[]) = (teval h env)::[]
+				| tevalList (h::t) = (teval h env)::(tevalList t)
+				| tevalList (_) = []
+		in
+			ListT (tevalList l)
+		end
+	| teval (ESeq t) _ = 
+		let in
+			case t of
+	  		SeqT elem => SeqT elem
+				| _ => raise EmptySeq
+		end 
+	| teval (Let(var, t1, t2)) (env:plcType env) =
+		let
+      val tevalT1 = teval t1 env
+      val mapEnv = (var, tevalT1) :: env
+    in
+      teval t2 mapEnv
+    end
+	| teval (Letrec(nameFun, typeArg, arg, typeFun, t1, t2)) (env:plcType env) =
+		let	
+			val envArg = (arg, typeArg)
+			val types = (typeArg, typeFun)
+			val envRecFun = (nameFun, FunT types)
+      val tevalT1 = teval t1 (envRecFun :: envArg :: env)
+      val tevalT2 = teval t2 (envRecFun :: env)
+    in
+      if tevalT1 = typeFun 
+			then tevalT2 
+			else raise WrongRetType
+    end
 
-fun teval (e:expr) (p:plcType env) : plcType= 
-    case e of
-        ConI _ => IntT (*2*)
-        | ConB _ => BoolT (*3, 4*)
-        | List [] => ListT [] (*5*)
-        | ESeq t => t (*7*)
-        | Let(n, e, pr) => (*8*)
-            let
-                val t1 = teval e p
-                val t2 = teval pr p
-            in
-                t2
-            end
-        | Prim1("!", e) => if teval e p = BoolT then BoolT else raise UnknownType (*14*)
-        | Prim1("-", e) => if teval e p = IntT then IntT else raise UnknownType (*15*)
+
 (*
         | Prim1("hd", Expr) => (*16*)
             let
@@ -59,4 +83,3 @@ fun teval (e:expr) (p:plcType env) : plcType=
         | Prim2("::", Expr1, Expr2) => if  then  else 
         | Prim2(";", Expr1, Expr2) => if  then  else
         *)
-        | _ => raise UnknownType;
