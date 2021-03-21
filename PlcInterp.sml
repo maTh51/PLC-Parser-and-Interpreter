@@ -153,3 +153,9 @@ fun eval (Var v) (env:plcVal env) = (*1*)
 								case ((eval e1 env), (eval e2 env)) of (IntV i1, IntV i2) => BoolV(i1 <> i2)
 								| _ => raise Impossible
 						end
+        | eval (Prim2(";", e1, e2)) (env:plcVal env) = (*26*)
+            let
+                val v1 = eval e1 env
+            in
+                eval e2 env
+            end

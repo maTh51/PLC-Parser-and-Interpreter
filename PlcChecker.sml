@@ -12,7 +12,7 @@ exception MatchResTypeDiff
 exception MatchCondTypesDiff
 exception CallTypeMisM
 exception NotFunc
-exception ListOutOfRange (*só pra lista, sequência não, parece que nao tem como fazer seleção de item em sequência. Item é só pra lista, pra sequência não. Item tem que ser lista (regra 25) *)
+exception ListOutOfRange (*só pra lista, sequência não, porque Item é só pra lista (regra 25) *)
 exception OpNonList (*quando for avaliar um Item. se a expressão em que tiver tentando usar não for uma lista, dispara essa exceção*)
 
 
@@ -159,3 +159,9 @@ fun teval (Var v) (env:plcType env) = (*1*)
 				if teval e1 env = teval e2 env andalso (teval e1 env = IntT orelse teval e1 env = BoolT)
 				then BoolT 
 				else raise UnknownType
+        | teval (Prim2(";", e1, e2)) (env:plcType env) = (*26*)
+            let
+                val t1 = teval e1 env
+            in
+                teval e2 env
+            end

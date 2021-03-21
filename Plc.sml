@@ -42,7 +42,7 @@ fun run exp =
                 eval exp []
             end
         handle SymbolNotFound => let val p = print ("eval error: SymbolNotFound") in raise SymbolNotFound end
-            | ValueNotFoundInMatch => let val p = print ("eval error: ValueNotFoundInMatch") in raise ValueNotFoundInMatch end
+            | ValueNotFoundInMatch => let val p = print ("eval error: Match expression was not found among the options!") in raise ValueNotFoundInMatch end
             | _ => let val p = print ("eval error: Impossible") in raise Impossible end
     in
         val2string(expResult) ^ " : " ^ type2string(expType)
