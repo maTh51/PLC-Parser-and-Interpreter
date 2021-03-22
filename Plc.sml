@@ -42,7 +42,7 @@ fun run exp =
             | NoMatchResults => let val p =  print ("type error: Match statement doesn't have any match cases.") in raise NoMatchResults end
             | MatchResTypeDiff => let val p =  print ("type error: Match statement with possible results of different types, when they should be the same.") in raise MatchResTypeDiff end
             | MatchCondTypesDiff => let val p =  print ("type error: Match statement is unable to match expressions of different types.") in raise MatchCondTypesDiff end
-            | CallTypeMisM => let val p =  print ("type error: Function parameter expected an expression of different type.") in raise CallTypeMisM end
+            | CallTypeMisM => let val p =  print ("type error: Function parameter expected expression of a different type.") in raise CallTypeMisM end
             | NotFunc => let val p =  print ("type error: Attempt to call undefined function.") in raise NotFunc end
             | ListOutOfRange => let val p =  print ("type error: Item index out of list's range.") in raise ListOutOfRange end
             | OpNonList  => let val p =  print ("type error: Attempt to use Item operator with a non-list type.") in raise OpNonList end
