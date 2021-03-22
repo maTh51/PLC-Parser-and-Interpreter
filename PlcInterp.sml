@@ -92,6 +92,28 @@ fun eval (Var v) (env:plcVal env) = (*1*)
                 IntV i => IntV(~i)
                 | _ => raise Impossible
         end
+		
+		| eval (Prim1("hd", e)) (env:plcVal env) = (*17*)
+				let in
+						case eval e env of 
+								SeqV s => let in hd s end handle Empty => raise HDEmptySeq
+								| _ => raise Impossible  
+				end
+		
+		| eval (Prim1("tl", e)) (env:plcVal env) = (*17*)
+				let in
+						case eval e env of 
+								SeqV s => let in SeqV (tl s) end handle Empty => raise TLEmptySeq
+								| _ => raise Impossible  
+				end
+		
+		| eval (Prim1("ise", e)) (env:plcVal env) = (*18*)
+				let in
+						case eval e env of 
+								SeqV s => if s = [] then BoolV true else BoolV false
+								| _ => raise Impossible  
+				end
+
     | eval (Prim1("print", e)) (env:plcVal env) = (*19*)
         let
             val v = print (val2string(eval e env) ^ "\n")
