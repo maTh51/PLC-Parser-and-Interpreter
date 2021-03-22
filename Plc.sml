@@ -34,7 +34,18 @@ fun run exp =
             end
         handle SymbolNotFound => let val p = print ("type error: SymbolNotFound") in raise SymbolNotFound end
             | EmptySeq => let val p =  print ("type error: EmptySeq") in raise EmptySeq end
+            | UnknownType => let val p =  print ("type error: ") in raise UnknownType end
+            | NotEqTypes => let val p =  print ("type error: ") in raise NotEqTypes end
             | WrongRetType => let val p =  print ("type error: WrongRetType") in raise WrongRetType end
+            | DiffBrTypes => let val p =  print ("type error: ") in raise DiffBrTypes end
+            | IfCondNotBool => let val p =  print ("type error: ") in raise IfCondNotBool end
+            | NoMatchResults => let val p =  print ("type error: ") in raise NoMatchResults end
+            | MatchResTypeDiff => let val p =  print ("type error: ") in raise MatchResTypeDiff end
+            | MatchCondTypesDiff => let val p =  print ("type error: ") in raise MatchCondTypesDiff end
+            | CallTypeMisM => let val p =  print ("type error: ") in raise CallTypeMisM end
+            | NotFunc => let val p =  print ("type error: ") in raise NotFunc end
+            | ListOutOfRange => let val p =  print ("type error: ") in raise ListOutOfRange end
+            | OpNonList  => let val p =  print ("type error: ") in raise OpNonList end
             | _ => let val p = "type error: UnknownType" in raise UnknownType end
 
         val expResult = 
