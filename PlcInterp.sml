@@ -153,7 +153,22 @@ fun eval (Var v) (env:plcVal env) = (*1*)
 								case ((eval e1 env), (eval e2 env)) of (IntV i1, IntV i2) => BoolV(i1 <> i2)
 								| _ => raise Impossible
 						end
-        | eval (Prim2(";", e1, e2)) (env:plcVal env) = (*26*)
+		
+		|	eval (Item(ith, e)) (env:plcVal env) = (*25*)
+				let
+						fun getIthElem (ith, []) = raise Impossible
+							|	getIthElem (ith, (h::[])) = if ith = 1 then h else raise Impossible
+							| getIthElem (ith, (h::t)) = if ith = 1 then h else getIthElem (ith - 1, t)
+				in
+						case (eval e env) of
+								ListV l => getIthElem(ith, l)
+								| SeqV s => getIthElem(ith, s)
+								| _ => raise Impossible
+				end
+
+		
+		
+		| eval (Prim2(";", e1, e2)) (env:plcVal env) = (*26*)
             let
                 val v1 = eval e1 env
             in

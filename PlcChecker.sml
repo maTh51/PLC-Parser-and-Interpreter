@@ -159,9 +159,21 @@ fun teval (Var v) (env:plcType env) = (*1*)
 				if teval e1 env = teval e2 env andalso (teval e1 env = IntT orelse teval e1 env = BoolT)
 				then BoolT 
 				else raise UnknownType
-        | teval (Prim2(";", e1, e2)) (env:plcType env) = (*26*)
-            let
-                val t1 = teval e1 env
-            in
-                teval e2 env
-            end
+		
+		| teval (Item(it, e)) (env:plcType env) = (*25*)
+				let
+						fun getIthElem (ith, []) = raise ListOutOfRange
+							|	getIthElem (ith, (h::[])) = if ith = 1 then h else raise ListOutOfRange
+							| getIthElem (ith, (h::t)) = if ith = 1 then h else getIthElem (ith - 1, t)
+				in
+						case (teval e env) of
+								ListT l => getIthElem(it, l)
+								| _ => raise OpNonList
+				end
+		
+		| teval (Prim2(";", e1, e2)) (env:plcType env) = (*26*)
+				let
+						val t1 = teval e1 env
+				in
+						teval e2 env
+				end
