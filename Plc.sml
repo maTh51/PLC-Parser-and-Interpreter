@@ -52,12 +52,12 @@ fun run exp =
             let in
                 eval exp []
             end
-        handle SymbolNotFound => let val p = print ("eval error: SymbolNotFound") in raise SymbolNotFound end
+        handle SymbolNotFound => let val p = print ("eval error: Attempt to evaluate undefined variable.") in raise SymbolNotFound end
             | Impossible => let val p = print ("eval error: Impossible evaluation.") in raise Impossible end
-            | HDEmptySeq => let val p = print ("eval error: ") in raise HDEmptySeq end
-            | TLEmptySeq => let val p = print ("eval error: ") in raise TLEmptySeq end
-            | ValueNotFoundInMatch => let val p = print ("eval error: Match expression was not found among the options.") in raise ValueNotFoundInMatch end
-            | NotAFunc => let val p = print ("eval error: ") in raise NotAFunc end
+            | HDEmptySeq => let val p = print ("eval error: Attempt to use operator hd with empty sequence.") in raise HDEmptySeq end
+            | TLEmptySeq => let val p = print ("eval error: Attempt to use operator tl with empty sequence.") in raise TLEmptySeq end
+            | ValueNotFoundInMatch => let val p = print ("eval error: Expression did not match any of the options.") in raise ValueNotFoundInMatch end
+            | NotAFunc => let val p = print ("eval error: Attempt to call undefined function.") in raise NotAFunc end
             | _ => let val p = print ("eval error: Impossible evaluation.") in raise Impossible end
     in
         val2string(expResult) ^ " : " ^ type2string(expType)
