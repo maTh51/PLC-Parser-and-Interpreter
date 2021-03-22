@@ -6,12 +6,6 @@ exception TLEmptySeq
 exception ValueNotFoundInMatch
 exception NotAFunc
 
-(*
-    variável livre, tenta procurar no ambiente e não encontra
-    aí vai ter a exceção symbolnotfoud (exceção do environ)
-    fazer testes tbm passando um environ, não só com ele vazio
-*)
-
 fun eval (Var v) (env:plcVal env) = (*1*)
         let in 
             lookup env v 
@@ -97,6 +91,12 @@ fun eval (Var v) (env:plcVal env) = (*1*)
             case (eval e env) of
                 IntV i => IntV(~i)
                 | _ => raise Impossible
+        end
+    | eval (Prim1("print", e)) (env:plcVal env) = (*19*)
+        let
+            val v = print (val2string(eval e env) ^ "\n")
+        in
+            ListV []
         end
     | eval (Prim2("&&", e1, e2)) (env:plcVal env) = (*20*)
         let in
