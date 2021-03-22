@@ -1,3 +1,7 @@
 PlcParser.yacc.sml
 PlcParser.yacc.sig
 PlcLexer.lex.sml
+dupla.txt
+*.zip
+*/
+testInterp.sml

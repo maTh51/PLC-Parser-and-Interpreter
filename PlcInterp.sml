@@ -7,19 +7,20 @@ exception ValueNotFoundInMatch
 exception NotAFunc
 
 fun eval (Var v) (env:plcVal env) = (*1*)
-        let in 
-            lookup env v 
-        handle 
-            SymbolNotFound => raise SymbolNotFound 
-        end
+		let in 
+			lookup env v 
+		handle 
+			SymbolNotFound => raise SymbolNotFound 
+		end
+	
 	| eval (ConI n) (_) = IntV n (*2*)
 	| eval (ConB b) (_) = BoolV b (*3, 4*)
 	| eval (List []) (_) = ListV [] (*5*)
 	| eval (List l) (env:plcVal env) = (*6*)
 		let 
 			fun evalList (h::[]) = eval h env :: []
-				| evalList (h::t) = eval h env :: evalList t
-				| evalList (_) = raise Impossible;
+			| evalList (h::t) = eval h env :: evalList t
+			| evalList (_) = raise Impossible;
 		in
 			ListV (evalList l)
 		end
@@ -37,50 +38,59 @@ fun eval (Var v) (env:plcVal env) = (*1*)
 		in
 			eval t2 mapEnv
 		end
-    | eval (Anon(s, x, e)) (env:plcVal env) = Clos("", x, e, env) (*10*)
-    | eval (Call (e1, e2)) (env:plcVal env) = (*11*)
-				let
-						fun getArgs (List (h::[])) = [eval h env]
-							| getArgs (List (h::t)) = [eval h env] @ getArgs (List t)
-							| getArgs (e) = [eval e env]
-						
-						val mapEnv = [("$list", ListV (getArgs e2))] @ env
-						val evalE1 = eval e1 env
-				in
-						case evalE1 of Clos(name, var, e, auxEnv) =>
-									let
-										val evalE2 = eval e2 mapEnv
-										val newEnv = (var, evalE2)::(name, evalE1)::auxEnv
-									in
-										eval e newEnv
-									end
-							| _ => raise NotAFunc
-				end
-    | eval (If(e, e1, e2)) (env:plcVal env) = (*12*)
+	| eval (Anon(s, x, e)) (env:plcVal env) = Clos("", x, e, env) (*10*)
+	| eval (Call (e1, e2)) (env:plcVal env) = (*11*)
+		let
+			fun getArgs (List (h::[])) = [eval h env]
+			| getArgs (List (h::t)) = [eval h env] @ getArgs (List t)
+			| getArgs (e) = [eval e env]
+			
+			val mapEnv = [("$list", ListV (getArgs e2))] @ env
+			val evalE1 = eval e1 env
+		in
+			case evalE1 of 
+				Clos(name, var, e, auxEnv) =>
+					let
+						val evalE2 = eval e2 mapEnv
+						val newEnv = (var, evalE2)::(name, evalE1)::auxEnv
+					in
+						eval e newEnv
+					end
+				| _ => raise NotAFunc
+		end
+	| eval (If(e, e1, e2)) (env:plcVal env) = (*12*)
         let in
             case (eval e env) of
-                  BoolV true => eval e1 env
+                BoolV true => eval e1 env
                 | BoolV false => eval e2 env
                 | _ => raise Impossible
         end
-    | eval (Match(e, matches)) (env:plcVal env) = (*13*)
+	| eval (Match(e, matches)) (env:plcVal env) = (*13*)
         let
             fun makeMatch (h::[]) =
                 let in
                     case h of
-                          (SOME m, r) => if eval e env = eval m env then eval r env else raise ValueNotFoundInMatch
-                        | (NONE, r) => eval r env
+                        (SOME m, r) => 
+							if eval e env = eval m env 
+							then eval r env 
+							else raise ValueNotFoundInMatch
+                        
+						| (NONE, r) => eval r env
                 end
-              | makeMatch (h::t) = 
+            | makeMatch (h::t) = 
                 let in
                     case h of
-                          (SOME m, r) => if eval e env = eval m env then eval r env else makeMatch(t)
-                        | (NONE, r) => eval r env
+                        (SOME m, r) => 
+							if eval e env = eval m env 
+							then eval r env 
+							else makeMatch(t)
+                        
+						| (NONE, r) => eval r env
                 end
         in
             makeMatch(matches)
         end
-    | eval (Prim1("!", e)) (env:plcVal env) = (*14*)
+	| eval (Prim1("!", e)) (env:plcVal env) = (*14*)
         let in
             case (eval e env) of 
                 BoolV b => BoolV(not b)
@@ -92,107 +102,120 @@ fun eval (Var v) (env:plcVal env) = (*1*)
                 IntV i => IntV(~i)
                 | _ => raise Impossible
         end
-		
-		| eval (Prim1("hd", e)) (env:plcVal env) = (*17*)
-				let in
-						case eval e env of 
-								SeqV s => let in hd s end handle Empty => raise HDEmptySeq
-								| _ => raise Impossible  
-				end
-		
-		| eval (Prim1("tl", e)) (env:plcVal env) = (*17*)
-				let in
-						case eval e env of 
-								SeqV s => let in SeqV (tl s) end handle Empty => raise TLEmptySeq
-								| _ => raise Impossible  
-				end
-		
-		| eval (Prim1("ise", e)) (env:plcVal env) = (*18*)
-				let in
-						case eval e env of 
-								SeqV s => if s = [] then BoolV true else BoolV false
-								| _ => raise Impossible  
-				end
-
+	| eval (Prim1("hd", e)) (env:plcVal env) = (*17*)
+			let in
+				case eval e env of 
+					SeqV s => 
+						let in 
+							hd s 
+						end handle Empty => raise HDEmptySeq
+					
+					| _ => raise Impossible
+			end
+	| eval (Prim1("tl", e)) (env:plcVal env) = (*17*)
+			let in
+				case eval e env of 
+					SeqV s => 
+						let in 
+							SeqV (tl s) 
+						end handle Empty => raise TLEmptySeq
+					
+					| _ => raise Impossible  
+			end
+	| eval (Prim1("ise", e)) (env:plcVal env) = (*18*)
+			let in
+				case eval e env of 
+					SeqV s => 
+						if s = [] 
+						then BoolV true 
+						else BoolV false
+					
+					| _ => raise Impossible  
+			end
     | eval (Prim1("print", e)) (env:plcVal env) = (*19*)
         let
             val v = print (val2string(eval e env) ^ "\n")
         in
             ListV []
         end
-    | eval (Prim2("&&", e1, e2)) (env:plcVal env) = (*20*)
+	| eval (Prim2("&&", e1, e2)) (env:plcVal env) = (*20*)
         let in
             case ((eval e1 env), (eval e2 env)) of
-                (BoolV b1, BoolV b2) => BoolV(b1 andalso b2)
-                | _ => raise Impossible
+                (BoolV b1, BoolV b2) => 
+					BoolV(b1 andalso b2)
+                
+				| _ => raise Impossible
         end
-		| eval (Prim2("::", e1, e2)) (env:plcVal env) = (*21*)
+	| eval (Prim2("::", e1, e2)) (env:plcVal env) = (*21*)
         let in
             case ((eval e1 env), (eval e2 env)) of
                 (IntV i, SeqV s) => SeqV (IntV i :: s)
-								| (BoolV b, SeqV s) =>  SeqV (BoolV b :: s)
-								| (ListV l, SeqV s) => SeqV (ListV l :: s)
+				| (BoolV b, SeqV s) =>  SeqV (BoolV b :: s)
+				| (ListV l, SeqV s) => SeqV (ListV l :: s)
                 | _ => raise Impossible
         end
-		
-		| eval (Prim2("+", e1, e2)) (env:plcVal env) = (*22*)
-						let in
-								case ((eval e1 env), (eval e2 env)) of (IntV i1, IntV i2) => IntV(i1 + i2)
-								| _ => raise Impossible
-						end
-		| eval (Prim2("-", e1, e2)) (env:plcVal env) = (*22*)
-						let in
-								case ((eval e1 env), (eval e2 env)) of (IntV i1, IntV i2) => IntV(i1 - i2)
-								| _ => raise Impossible
-						end
-		| eval (Prim2("*", e1, e2)) (env:plcVal env) = (*22*)
-						let in
-								case ((eval e1 env), (eval e2 env)) of (IntV i1, IntV i2) => IntV(i1 * i2)
-								| _ => raise Impossible
-						end
-		| eval (Prim2("/", e1, e2)) (env:plcVal env) = (*22*)
-						let in
-								case ((eval e1 env), (eval e2 env)) of (IntV i1, IntV i2) => IntV(i1 div i2)
-								| _ => raise Impossible
-						end
-		| eval (Prim2("<", e1, e2)) (env:plcVal env) = (*23*)
-						let in
-								case ((eval e1 env), (eval e2 env)) of (IntV i1, IntV i2) => BoolV(i1 < i2)
-								| _ => raise Impossible
-						end
-		| eval (Prim2("<=", e1, e2)) (env:plcVal env) = (*23*)
-						let in
-								case ((eval e1 env), (eval e2 env)) of (IntV i1, IntV i2) => BoolV(i1 <= i2)
-								| _ => raise Impossible
-						end
-		| eval (Prim2("=", e1, e2)) (env:plcVal env) = (*24*)
-						let in
-								case ((eval e1 env), (eval e2 env)) of (IntV i1, IntV i2) => BoolV(i1 = i2)
-								| _ => raise Impossible
-						end
-		| eval (Prim2("!=", e1, e2)) (env:plcVal env) = (*24*)
-						let in
-								case ((eval e1 env), (eval e2 env)) of (IntV i1, IntV i2) => BoolV(i1 <> i2)
-								| _ => raise Impossible
-						end
-		
-		|	eval (Item(ith, e)) (env:plcVal env) = (*25*)
-				let
-						fun getIthElem (ith, []) = raise Impossible
-							|	getIthElem (ith, (h::[])) = if ith = 1 then h else raise Impossible
-							| getIthElem (ith, (h::t)) = if ith = 1 then h else getIthElem (ith - 1, t)
-				in
-						case (eval e env) of
-								ListV l => getIthElem(ith, l)
-								| SeqV s => getIthElem(ith, s)
-								| _ => raise Impossible
-				end
-
-		
-		
-		| eval (Prim2(";", e1, e2)) (env:plcVal env) = (*26*)
-            let
-                val v1 = eval e1 env
-            in
-                eval e2 env
-            end
+	| eval (Prim2("+", e1, e2)) (env:plcVal env) = (*22*)
+		let in
+			case ((eval e1 env), (eval e2 env)) of 
+				(IntV i1, IntV i2) => IntV(i1 + i2)
+				| _ => raise Impossible
+		end
+	| eval (Prim2("-", e1, e2)) (env:plcVal env) = (*22*)
+		let in
+			case ((eval e1 env), (eval e2 env)) of 
+				(IntV i1, IntV i2) => IntV(i1 - i2)
+				| _ => raise Impossible
+		end
+	| eval (Prim2("*", e1, e2)) (env:plcVal env) = (*22*)
+		let in
+			case ((eval e1 env), (eval e2 env)) of 
+				(IntV i1, IntV i2) => IntV(i1 * i2)
+				| _ => raise Impossible
+		end
+	| eval (Prim2("/", e1, e2)) (env:plcVal env) = (*22*)
+		let in
+			case ((eval e1 env), (eval e2 env)) of 
+				(IntV i1, IntV i2) => IntV(i1 div i2)
+				| _ => raise Impossible
+		end
+	| eval (Prim2("<", e1, e2)) (env:plcVal env) = (*23*)
+		let in
+			case ((eval e1 env), (eval e2 env)) of 
+				(IntV i1, IntV i2) => BoolV(i1 < i2)
+				| _ => raise Impossible
+		end
+	| eval (Prim2("<=", e1, e2)) (env:plcVal env) = (*23*)
+		let in
+			case ((eval e1 env), (eval e2 env)) of 
+				(IntV i1, IntV i2) => BoolV(i1 <= i2)
+				| _ => raise Impossible
+		end
+	| eval (Prim2("=", e1, e2)) (env:plcVal env) = (*24*)
+		let in
+			case ((eval e1 env), (eval e2 env)) of 
+				(IntV i1, IntV i2) => BoolV(i1 = i2)
+				| _ => raise Impossible
+		end
+	| eval (Prim2("!=", e1, e2)) (env:plcVal env) = (*24*)
+		let in
+			case ((eval e1 env), (eval e2 env)) of 
+				(IntV i1, IntV i2) => BoolV(i1 <> i2)
+				| _ => raise Impossible
+		end
+	| eval (Item(ith, e)) (env:plcVal env) = (*25*)
+		let
+			fun getIthElem (ith, []) = raise Impossible
+			| getIthElem (ith, (h::[])) = if ith = 1 then h else raise Impossible
+			| getIthElem (ith, (h::t)) = if ith = 1 then h else getIthElem (ith - 1, t)
+		in
+			case (eval e env) of
+				ListV l => getIthElem(ith, l)
+				| SeqV s => getIthElem(ith, s)
+				| _ => raise Impossible
+		end
+	| eval (Prim2(";", e1, e2)) (env:plcVal env) = (*26*)
+		let
+			val v1 = eval e1 env
+		in
+			eval e2 env
+		end
