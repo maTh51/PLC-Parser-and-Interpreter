@@ -117,9 +117,32 @@ fun teval (Var v) (env:plcType env) = (*1*)
             end
     | teval (Prim1("!", e)) (env:plcType env) = (*14*)
         if teval e env = BoolT then BoolT else raise UnknownType
-    | teval (Prim1("-", e)) (env:plcType env) = (*15*)
+    
+		| teval (Prim1("-", e)) (env:plcType env) = (*15*)
         if teval e env = IntT then IntT else raise UnknownType
-    | teval (Prim1("print", e)) (env:plcType env) = (*19*)
+    
+		| teval (Prim1("hd", e)) (env:plcType env) = (*16*)
+				let in
+						case (teval e env) of
+								SeqT s => s
+              	| _ => raise UnknownType
+				end
+		
+		| teval (Prim1("tl", e)) (env:plcType env) = (*17*)
+				let in
+						case (teval e env) of
+								SeqT s => SeqT s
+              	| _ => raise UnknownType
+				end
+		
+		| teval (Prim1("ise", e)) (env:plcType env) = (*18*)
+				let in
+						case (teval e env) of
+								SeqT s => BoolT
+              	| _ => raise UnknownType
+				end
+		
+		| teval (Prim1("print", e)) (env:plcType env) = (*19*)
         let
             val t = teval e env
         in

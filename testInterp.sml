@@ -14,4 +14,5 @@ eval (fromString "([Bool] [])") [];
 teval (fromString "var x = 9; x+3") [];
 eval (fromString "var x = 9; x+3") [];
 eval (fromString "fun f(Int x) = -x; f(5)") [];
-
+eval (fromString "var x = 9; print x") [];
+val test = eval (fromString "ise ([Int] [])") []
