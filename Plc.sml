@@ -35,14 +35,14 @@ fun run exp =
         handle SymbolNotFound => let val p = print ("type error: SymbolNotFound") in raise SymbolNotFound end
             | EmptySeq => let val p =  print ("type error: EmptySeq") in raise EmptySeq end
             | UnknownType => let val p =  print ("type error: ") in raise UnknownType end
-            | NotEqTypes => let val p =  print ("type error: ") in raise NotEqTypes end
-            | WrongRetType => let val p =  print ("type error: WrongRetType") in raise WrongRetType end
-            | DiffBrTypes => let val p =  print ("type error: ") in raise DiffBrTypes end
-            | IfCondNotBool => let val p =  print ("type error: ") in raise IfCondNotBool end
-            | NoMatchResults => let val p =  print ("type error: ") in raise NoMatchResults end
-            | MatchResTypeDiff => let val p =  print ("type error: ") in raise MatchResTypeDiff end
-            | MatchCondTypesDiff => let val p =  print ("type error: ") in raise MatchCondTypesDiff end
-            | CallTypeMisM => let val p =  print ("type error: ") in raise CallTypeMisM end
+            | NotEqTypes => let val p =  print ("type error: Operator :: received expressions with different types, but they should be the same.") in raise NotEqTypes end
+            | WrongRetType => let val p =  print ("type error: Recursive function expected different type for the return value.") in raise WrongRetType end
+            | DiffBrTypes => let val p =  print ("type error: If statement with different branch types, but they should be the same.") in raise DiffBrTypes end
+            | IfCondNotBool => let val p =  print ("type error: If statement with a condition that is not boolean.") in raise IfCondNotBool end
+            | NoMatchResults => let val p =  print ("type error: Match statement doesn't have any match cases.") in raise NoMatchResults end
+            | MatchResTypeDiff => let val p =  print ("type error: Match statement with possible results of different types, when they should be the same.") in raise MatchResTypeDiff end
+            | MatchCondTypesDiff => let val p =  print ("type error: Match statement is unable to match expressions of different types.") in raise MatchCondTypesDiff end
+            | CallTypeMisM => let val p =  print ("type error: Function parameter expected an expression of different type.") in raise CallTypeMisM end
             | NotFunc => let val p =  print ("type error: ") in raise NotFunc end
             | ListOutOfRange => let val p =  print ("type error: ") in raise ListOutOfRange end
             | OpNonList  => let val p =  print ("type error: ") in raise OpNonList end

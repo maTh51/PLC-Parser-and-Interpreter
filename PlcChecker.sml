@@ -83,7 +83,7 @@ fun teval (Var v) (env:plcType env) = (*1*)
             if cond = BoolT
                 then if t1 = t2
                         then t1
-                        else raise NotEqTypes
+                        else raise DiffBrTypes
                 else raise IfCondNotBool
         end
     | teval (Match(e, matches)) (env:plcType env) = (*13*)
